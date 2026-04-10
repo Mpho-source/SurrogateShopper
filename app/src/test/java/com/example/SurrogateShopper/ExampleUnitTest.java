@@ -1,4 +1,4 @@
-package com.example.surrogatetester;
+package com.example.SurrogateShopper;
 
 import org.junit.Test;
 

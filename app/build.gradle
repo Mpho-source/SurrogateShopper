@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.surrogatetester'
+    namespace 'com.example.surrogateshopper'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.surrogatetester"
+        applicationId "com.example.surrogateshopper"
         minSdk 24
         targetSdk 33
         versionCode 1
