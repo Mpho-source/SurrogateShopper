@@ -18,13 +18,13 @@
 
             <TextView
                 android:id="@+id/welcomeShopper"
-                android:layout_width="330dp"
-                android:layout_height="54dp"
+                android:layout_width="345dp"
+                android:layout_height="91dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="44dp"
-                android:layout_marginEnd="14dp"
-                android:text="Hi,"
+                android:layout_marginTop="11dp"
+                android:layout_marginEnd="21dp"
+                android:text="User"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textSize="33sp"
                 android:textStyle="bold|italic" />
@@ -35,13 +35,13 @@
                 android:layout_height="58dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="35dp"
-                android:layout_marginBottom="550dp"
+                android:layout_marginEnd="42dp"
+                android:layout_marginBottom="564dp"
                 android:ems="10"
                 android:hint="Enter Product"
                 android:inputType="textPersonName"
                 android:visibility="gone"
-                />
+                 />
 
             <Button
                 android:id="@+id/btnGo"
@@ -49,10 +49,12 @@
                 android:layout_height="38dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="42dp"
-                android:layout_marginBottom="570dp"
+                android:layout_marginEnd="23dp"
+                android:layout_marginBottom="581dp"
                 android:text="➔"
                 android:visibility="gone"
+
+
 
                 />
 
@@ -62,59 +64,76 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="155dp"
-                android:layout_marginBottom="494dp"
+                android:layout_marginEnd="156dp"
+                android:layout_marginBottom="523dp"
                 android:text="Done"
                 android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/emptyBasket"
                 android:layout_width="wrap_content"
-                android:layout_height="401dp"
-                android:layout_above="@id/btnAdd"
+                android:layout_height="284dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="48dp"
-                android:layout_marginTop="148dp"
-                android:layout_marginEnd="35dp"
+                android:layout_marginStart="53dp"
+                android:layout_marginTop="193dp"
+                android:layout_marginEnd="41dp"
                 android:layout_marginBottom="-106dp"
-                android:src="@drawable/basket">
+                android:src="@drawable/basket"
+                tools:visibility="visible">
 
             </ImageView>
 
-            <Button
-                android:id="@+id/btnAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="65dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="330dp"
-                android:layout_marginTop="469dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="79dp"
-                android:background="#DFD3D3"
-                android:backgroundTint="#4CAF50"
-                android:onClick="doAdd"
-                android:shadowColor="@color/white"
-                android:text="+"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                app:iconTint="#BDBDBD" />
+
 
             <TextView
                 android:id="@+id/textEmpty"
                 android:layout_width="192dp"
                 android:layout_height="21dp"
-                android:layout_below="@id/welcomeShopper"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginStart="124dp"
-                android:layout_marginTop="450dp"
-                android:layout_marginEnd="95dp"
-                android:layout_marginBottom="153dp"
+                android:layout_marginStart="130dp"
+                android:layout_marginEnd="89dp"
+                android:layout_marginBottom="232dp"
                 android:onClick="doAdd"
                 android:text="Your Basket Is Still Empty"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+            <ListView
+                android:id="@+id/productsList"
+                android:layout_width="315dp"
+                android:layout_height="529dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="76dp"
+                android:layout_marginBottom="-7dp"
+                tools:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/textList"
+                android:layout_width="194dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="215dp"
+                android:layout_marginBottom="533dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="41dp"
+                android:layout_marginBottom="48dp"
+                android:clickable="true"
+                android:onClick="doAdd"
+                app:backgroundTint="#FFFFFF"
+                app:srcCompat="@android:drawable/ic_input_add" />
+
 
         </RelativeLayout>
 
