@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnSign;
+
     RadioButton radShopper, radVolunteer;
     EditText etName, etPassword;
     @Override
@@ -20,41 +20,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnSign = findViewById(R.id.btnSign);
+
         radShopper = findViewById(R.id.radShopper);
         radVolunteer = findViewById(R.id.radVolunteer);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
 
 
-        btnSign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(radVolunteer.isChecked() && !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
-                    Intent intent = new Intent(MainActivity.this, Volunteer.class);
-                    String name = etName.getText().toString();
-                    intent.putExtra("Volunteer_Name", name);
-                    startActivity(intent);
-                    Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
-                }
-                else if(radShopper.isChecked() && !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
-
-                    Intent intent = new Intent(MainActivity.this, Shopper.class);
-                    String name = etName.getText().toString();
-                    intent.putExtra("Shopper_Name", name);
-                    startActivity(intent);
-                    Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(MainActivity.this, "Enter all the required details", Toast.LENGTH_LONG).show();
-                }
 
 
-            }
-        });
+    }
 
+    public void doSignIn(View view) {
+        if(radVolunteer.isChecked() && !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
+            Intent intent = new Intent(MainActivity.this, Volunteer.class);
+            String name = etName.getText().toString();
+            intent.putExtra("Volunteer_Name", name);
+            startActivity(intent);
+            Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
+        }
+        else if(radShopper.isChecked() && !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
 
-
+            Intent intent = new Intent(MainActivity.this, Shopper.class);
+            String name = etName.getText().toString();
+            intent.putExtra("Shopper_Name", name);
+            startActivity(intent);
+            Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(MainActivity.this, "Enter all the required details", Toast.LENGTH_LONG).show();
+        }
     }
 }

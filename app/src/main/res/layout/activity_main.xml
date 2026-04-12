@@ -1,101 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pgae_bg"
+   android:background="@drawable/backg"
     tools:context=".MainActivity">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="124dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp">
-
-        <ImageView
-            android:layout_width="136dp"
-            android:layout_height="106dp"
-            android:src="@drawable/account_icon">
-
-        </ImageView>
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <RadioButton
-                android:id="@+id/radShopper"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="Shopper"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-            <RadioButton
-                android:id="@+id/radVolunteer"
-                android:layout_width="match_parent"
-                android:layout_height="62dp"
-                android:text="Volunteer"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-        </RadioGroup>
+        android:layout_height="match_parent"
+        android:alpha="0.7"
+        android:background="@drawable/pgae_bg">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="175dp"
+
+            android:layout_marginBottom="21dp"
+            android:gravity="center"
+
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="28dp">
 
-            <EditText
-                android:id="@+id/etName"
-                android:layout_width="match_parent"
-                android:layout_height="77dp"
-                android:ems="10"
-                android:hint="Name"
-
-                android:inputType="textPersonName" />
-
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:paddingBottom="25dp" />
+                android:src="@drawable/logo_icon"></ImageView>
 
-            <Button
-                android:id="@+id/btnSign"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign In"
+                android:fontFamily="sans-serif-medium"
+                android:text="Surrogate Shopper"
+                android:textColor="@color/black"
+                android:textSize="32sp"
+                android:textStyle="bold"></TextView>
 
-                />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="180dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp">
 
-    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        </LinearLayout>
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="Surrogate Shopper"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_alignParentBottom="true"
+        app:cardCornerRadius="28dp"
+        android:layout_marginBottom="-20dp"
+
+>
+s
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/pgae_bg">
+
+            <ImageView
+                android:layout_width="136dp"
+                android:layout_height="106dp"
+                android:src="@drawable/account_icon">
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/welcomeLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Welcome"
+                android:gravity="center"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/enterDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:gravity="center"
+                android:text="Enter your login in details" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"></View>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RadioButton
+                    android:id="@+id/radShopper"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:text="Shopper"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <RadioButton
+                    android:id="@+id/radVolunteer"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:text="Volunteer"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <EditText
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="77dp"
+                        android:ems="10"
+                        android:hint="Name"
+
+                        android:inputType="textPersonName" />
+
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Password"
+                        android:inputType="textPassword"
+                        android:paddingBottom="25dp" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:onClick="doSignIn"
+                        android:text="Sign in"
+                        app:cornerRadius="32dp">
+
+                    </com.google.android.material.button.MaterialButton>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp">
+
+                    </View>
+
+                </LinearLayout>
+
+            </RadioGroup>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+</RelativeLayout>

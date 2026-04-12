@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.R.layout;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -108,10 +111,28 @@ public class Shopper extends AppCompatActivity {
                 btnDone.setVisibility(View.INVISIBLE);
                 btnGo.setVisibility(View.INVISIBLE);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(Shopper.this, layout.simple_list_item_1, products);
+                //ArrayAdapter<String> adapter = new ArrayAdapter<>(Shopper.this, layout.simple_list_item_1, products);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Shopper.this, android.R.layout.simple_list_item_1, products) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text = (TextView) view.findViewById(android.R.id.text1);
+                        text.setTextColor(Color.WHITE);
+                        text.setPadding(10, 5, 10, 5);
+                        view.setLayoutParams(new AbsListView.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                120 //
+                        ));
+
+                        return view;
+                    }
+                };
                 productsList.setAdapter(adapter);
 
+
+
                 TextView textList = findViewById(R.id.textList);
+                textList.setTextColor(Color.WHITE);
                 textList.setText("MY LIST");
 
 
