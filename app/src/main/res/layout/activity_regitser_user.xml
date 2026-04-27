@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backg"
-    android:paddingLeft="-5dp"
-    tools:context=".MainActivity">
+    tools:context=".RegitserUser">
 
 
     <RelativeLayout
@@ -59,8 +58,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-20dp"
         app:cardCornerRadius="28dp"
+        android:layout_marginBottom="-20dp"
 
         >
 
@@ -68,7 +67,7 @@
         <LinearLayout
             android:id="@+id/loginContent"
             android:layout_width="match_parent"
-            android:layout_height="603dp"
+            android:layout_height="575dp"
             android:background="@drawable/pgae_bg"
             android:gravity="center"
             android:orientation="vertical"
@@ -86,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Welcome"
+                android:text="Create Account"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -96,83 +95,107 @@
                 android:layout_height="wrap_content"
                 android:alpha="0.7"
                 android:gravity="center"
-                android:text="Enter your login in details" />
+                android:text="Enter your credentials" />
 
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="15dp"></View>
 
-            <LinearLayout
+            <RadioGroup
                 android:layout_width="match_parent"
-                android:layout_height="283dp"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:layout_height="48dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/userVolunteer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:buttonTint="#101010"
+                        android:text="Volunteer"
+                        android:textSize="18sp" />
+
+                    <RadioButton
+                        android:id="@+id/userShopper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:buttonTint="#070707"
+                        android:text="Shopper"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/credentials"
+                android:layout_width="match_parent"
+                android:layout_height="203dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <EditText
                     android:id="@+id/etName"
                     android:layout_width="371dp"
                     android:layout_height="58dp"
+                    android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Email"
+                    android:hint="First and Last Names"
 
                     android:inputType="textPersonName" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="371dp"
+                    android:layout_height="58dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Email Address"
+                    android:inputType="textEmailAddress" />
 
                 <EditText
                     android:id="@+id/etPassword"
                     android:layout_width="371dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="58dp"
+                    android:layout_weight="1"
                     android:ems="10"
                     android:hint="Password"
-                    android:inputType="textPassword"
-                    android:paddingBottom="25dp" />
+                    android:inputType="textPassword" />
 
+                <EditText
+                    android:id="@+id/etPasswordVal"
+                    android:layout_width="372dp"
+                    android:layout_height="58dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="Re-enter Password"
+                    android:inputType="textPersonName" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSignIn"
-                    android:layout_width="370dp"
-                    android:layout_height="67dp"
-                    android:onClick="doSignIn"
-                    android:text="Sign in"
-                    app:cornerRadius="32dp">
-
-
-                </com.google.android.material.button.MaterialButton>
-
-                <LinearLayout
+                <Button
+                    android:id="@+id/btnCreateAcc"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:orientation="horizontal">
+                    android:layout_height="58dp"
+                    android:layout_weight="1"
+                    android:text="Register" />
 
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingLeft="10dp"
-                        android:text="Don't have an account?"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/textRegister"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="5"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="Register"
-                        android:onClick="doDirectRegister"
-                        android:textColor="#C5DAF6"
-                        android:textSize="17dp"
-                        android:textStyle="bold|italic" />
-                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
 
 
 </RelativeLayout>

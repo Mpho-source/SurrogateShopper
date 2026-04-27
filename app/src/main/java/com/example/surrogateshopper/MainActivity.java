@@ -21,25 +21,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        radShopper = findViewById(R.id.radShopper);
-        radVolunteer = findViewById(R.id.radVolunteer);
+        //radShopper = findViewById(R.id.radShopper);
+       // radVolunteer = findViewById(R.id.radVolunteer);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
-
-
 
 
     }
 
     public void doSignIn(View view) {
-        if(radVolunteer.isChecked() && !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
+        if( !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
             Intent intent = new Intent(MainActivity.this, Volunteer.class);
             String name = etName.getText().toString();
             intent.putExtra("Volunteer_Name", name);
             startActivity(intent);
             Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
         }
-        else if(radShopper.isChecked() && !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
+       else if( !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
 
             Intent intent = new Intent(MainActivity.this, Shopper.class);
             String name = etName.getText().toString();
@@ -50,5 +48,12 @@ public class MainActivity extends AppCompatActivity {
         else{
             Toast.makeText(MainActivity.this, "Enter all the required details", Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    public void doDirectRegister(View view){
+        Intent intent = new Intent(MainActivity.this, RegitserUser.class);
+        intent.putExtra("Register", "");
+        startActivity(intent);
     }
 }
