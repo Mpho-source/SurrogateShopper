@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://146.141.21.155/students/sgroup2715/signin.php")
+                .url("https://wmc.ms.wits.ac.za/students/sgroup2715/signin.php")
                 .post(formBody)
                 .build();
 
