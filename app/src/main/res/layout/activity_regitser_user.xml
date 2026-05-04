@@ -73,13 +73,6 @@
             android:orientation="vertical"
             android:paddingBottom="125dp">
 
-            <ImageView
-                android:layout_width="136dp"
-                android:layout_height="106dp"
-                android:src="@drawable/account_icon">
-
-            </ImageView>
-
             <TextView
                 android:id="@+id/welcomeLogin"
                 android:layout_width="match_parent"
@@ -102,38 +95,36 @@
                 android:layout_height="15dp"></View>
 
             <RadioGroup
+                android:id="@+id/userType"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="66dp"
+                android:layout_marginTop="12.5dp"
+                android:layout_marginBottom="12.5dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/userVolunteer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="#101010"
+                    android:text="Volunteer"
+                    android:textSize="18sp" />
 
-                    <RadioButton
-                        android:id="@+id/userVolunteer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:buttonTint="#101010"
-                        android:text="Volunteer"
-                        android:textSize="18sp" />
+                <RadioButton
+                    android:id="@+id/userShopper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:buttonTint="#070707"
+                    android:text="Shopper"
+                    android:textSize="18sp" />
 
-                    <RadioButton
-                        android:id="@+id/userShopper"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:buttonTint="#070707"
-                        android:text="Shopper"
-                        android:textSize="18sp" />
-                </LinearLayout>
             </RadioGroup>
 
             <LinearLayout
                 android:id="@+id/credentials"
                 android:layout_width="match_parent"
-                android:layout_height="203dp"
+                android:layout_height="298dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -142,23 +133,18 @@
                     android:id="@+id/etName"
                     android:layout_width="371dp"
                     android:layout_height="58dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1"
                     android:ems="10"
+
                     android:hint="First and Last Names"
-
                     android:inputType="textPersonName" />
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TextView" />
 
                 <EditText
                     android:id="@+id/etEmail"
                     android:layout_width="371dp"
                     android:layout_height="58dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="Email Address"
@@ -168,6 +154,7 @@
                     android:id="@+id/etPassword"
                     android:layout_width="371dp"
                     android:layout_height="58dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="Password"
@@ -177,16 +164,29 @@
                     android:id="@+id/etPasswordVal"
                     android:layout_width="372dp"
                     android:layout_height="58dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1"
                     android:ems="10"
                     android:hint="Re-enter Password"
                     android:inputType="textPersonName" />
 
                 <Button
-                    android:id="@+id/btnCreateAcc"
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:id="@+id/btnAddress"
+                    android:layout_width="248dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="1"
+                    android:backgroundTint="#2196F3"
+                    android:onClick="doshowAddressSheet"
+                    android:text="Add Address" />
+
+                <Button
+                    android:id="@+id/btnCreateAcc"
+                    android:layout_width="329dp"
+                    android:layout_height="59dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#2196F3"
+                    android:onClick="doRegister"
                     android:text="Register" />
 
 

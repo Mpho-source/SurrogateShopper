@@ -72,7 +72,7 @@
             android:background="@drawable/pgae_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingBottom="125dp">
+            android:paddingBottom="120dp">
 
             <ImageView
                 android:layout_width="136dp"
@@ -131,6 +131,7 @@
                     android:id="@+id/btnSignIn"
                     android:layout_width="370dp"
                     android:layout_height="67dp"
+                    android:backgroundTint="#2196F3"
                     android:onClick="doSignIn"
                     android:text="Sign in"
                     app:cornerRadius="32dp">
@@ -161,8 +162,8 @@
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true"
-                        android:text="Register"
                         android:onClick="doDirectRegister"
+                        android:text="Register"
                         android:textColor="#C5DAF6"
                         android:textSize="17dp"
                         android:textStyle="bold|italic" />

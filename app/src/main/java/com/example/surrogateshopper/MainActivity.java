@@ -1,7 +1,6 @@
 package com.example.surrogateshopper;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,47 +8,88 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
+import java.io.IOException;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-
     RadioButton radShopper, radVolunteer;
     EditText etName, etPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        //radShopper = findViewById(R.id.radShopper);
-       // radVolunteer = findViewById(R.id.radVolunteer);
         etName = findViewById(R.id.etName);
         etPassword = findViewById(R.id.etPassword);
-
-
     }
 
     public void doSignIn(View view) {
-        if( !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
-            Intent intent = new Intent(MainActivity.this, Volunteer.class);
-            String name = etName.getText().toString();
-            intent.putExtra("Volunteer_Name", name);
-            startActivity(intent);
-            Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
-        }
-       else if( !etName.getText().toString().isEmpty() && !etPassword.getText().toString().isEmpty()){
+        String email = etName.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-            Intent intent = new Intent(MainActivity.this, Shopper.class);
-            String name = etName.getText().toString();
-            intent.putExtra("Shopper_Name", name);
-            startActivity(intent);
-            Toast.makeText(MainActivity.this, "Signing in..." + name, Toast.LENGTH_SHORT).show();
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
+            return;
         }
-        else{
-            Toast.makeText(MainActivity.this, "Enter all the required details", Toast.LENGTH_LONG).show();
-        }
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                .build();
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("email", email)
+                .add("password", password)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("http://146.141.21.155/students/sgroup2715/signin.php")
+                .post(formBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String res = response.body().string().trim();
+                runOnUiThread(() -> {
+                    if (res.startsWith("success")) {
+                        String role = res.contains(":") ? res.split(":")[1].trim() : "";
+
+                        Intent intent;
+                        if (role.equalsIgnoreCase("Shopper")) {
+                            intent = new Intent(MainActivity.this, Shopper.class);
+                        } else if (role.equalsIgnoreCase("Volunteer")) {
+                            intent = new Intent(MainActivity.this, Volunteer.class);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Role error: " + res, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        startActivity(intent);
+                        finish();
+                    } else if (res.equals("invalid")) {
+                        Toast.makeText(getApplicationContext(), "Wrong email or password", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Server Error: " + res, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
-
 
     public void doDirectRegister(View view){
         Intent intent = new Intent(MainActivity.this, RegitserUser.class);
