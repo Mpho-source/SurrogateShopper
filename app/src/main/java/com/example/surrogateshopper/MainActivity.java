@@ -3,6 +3,7 @@ package com.example.surrogateshopper;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
                 final String res = response.body().string().trim();
                 runOnUiThread(() -> {
                     if (res.startsWith("success")) {
-                        String role = res.contains(":") ? res.split(":")[1].trim() : "";
+                        String[] parts = res.split(":");
+                        String role = parts.length > 1 ? parts[1] : "";
+                        String name = parts.length > 2 ? parts[2] : "";
 
                         Intent intent;
                         if (role.equalsIgnoreCase("Shopper")) {
@@ -79,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Role error: " + res, Toast.LENGTH_LONG).show();
                             return;
                         }
+
+                        System.out.println( "Output +++++++++++" + name);
+
+                        intent.putExtra("USER_NAME", name);
                         startActivity(intent);
                         finish();
                     } else if (res.equals("invalid")) {

@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Address"
+        android:text="Products"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -16,24 +16,26 @@
         android:id="@+id/etProductName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Street Name and Number" />
+        android:hint="Product Name" />
 
     <EditText
-        android:id="@+id/etSuburb"
+        android:id="@+id/etQuantity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Suburb" />
+        android:ems="10"
+        android:hint="Quantity"
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/etProductSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="City" />
+        android:hint="Size" />
 
     <Button
         android:id="@+id/btnAddProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Address" />
+        android:text="Add Product" />
 
 </LinearLayout>

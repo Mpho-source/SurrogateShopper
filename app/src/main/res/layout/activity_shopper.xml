@@ -1,155 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/backg"
-    android:theme="@style/WhiteTextTheme"
+    android:background="@drawable/pgae_bg"
+
+    android:theme="@style/Theme.SurrogateShopper.WithActionBar"
     tools:context=".Shopper">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <RelativeLayout
+    <!-- Welcome Text -->
+
+    <TextView
+        android:id="@+id/welcomeShopper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Hi 👋 User"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="32sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Basket Heading -->
+
+    <TextView
+        android:id="@+id/tvBasket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="My Basket"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcomeShopper" />
+
+    <!-- Basket Count -->
+
+    <TextView
+        android:id="@+id/textList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvBasket" />
+
+    <!-- Empty Basket Image -->
+
+    <!-- Empty Text -->
+
+    <TextView
+        android:id="@+id/textEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Your Basket Is Still Empty"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emptyBasket" />
+
+    <!-- Scrollable Item List -->
+
+    <!-- Floating Button -->
+
+    <ImageView
+        android:id="@+id/emptyBasket"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/basket"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textList" />
+
+    <ScrollView
+        android:id="@+id/scrollItems"
+        android:layout_width="411dp"
+        android:layout_height="567dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="90dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textList"
+        app:layout_constraintVertical_bias="0.138">
+
+        <LinearLayout
+            android:id="@+id/itemsContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp" />
 
-            <TextView
-                android:id="@+id/welcomeShopper"
-                android:layout_width="345dp"
-                android:layout_height="91dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="11dp"
-                android:layout_marginEnd="21dp"
-                android:text="User"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textSize="33sp"
-                android:textStyle="bold|italic" />
+    </ScrollView>
 
-            <EditText
-                android:id="@+id/etProduct"
-                android:layout_width="317dp"
-                android:layout_height="58dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="42dp"
-                android:layout_marginBottom="564dp"
-                android:ems="10"
-                android:hint="Enter Product"
-                android:inputType="textPersonName"
-                android:visibility="gone"
-                style="@style/WhiteTextTheme"
-                android:textSize="18dp"
-                 />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:onClick="doShowItem"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
-            <Button
-                android:id="@+id/btnGo"
-                android:layout_width="57dp"
-                android:layout_height="38dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="23dp"
-                android:layout_marginBottom="581dp"
-                android:text="➔"
-                android:visibility="gone"
-
-
-
-                />
-
-            <Button
-                android:id="@+id/btnDone"
-                android:layout_width="78dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="156dp"
-                android:layout_marginBottom="523dp"
-                android:text="Done"
-                android:visibility="gone"/>
-
-            <ImageView
-                android:id="@+id/emptyBasket"
-                android:layout_width="wrap_content"
-                android:layout_height="284dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="53dp"
-                android:layout_marginTop="193dp"
-                android:layout_marginEnd="41dp"
-                android:layout_marginBottom="-106dp"
-                android:src="@drawable/basket"
-                tools:visibility="visible">
-
-            </ImageView>
-
-
-
-            <TextView
-                android:id="@+id/textEmpty"
-                android:layout_width="192dp"
-                android:layout_height="21dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="130dp"
-                android:layout_marginEnd="89dp"
-                android:layout_marginBottom="232dp"
-                android:onClick="doAdd"
-                android:text="Your Basket Is Still Empty"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
-
-            <ListView
-                android:id="@+id/productsList"
-                android:layout_width="match_parent"
-                android:layout_height="544dp"
-                android:layout_above="@+id/btnAdd"
-                android:isScrollContainer="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="-7dp"
-                android:nestedScrollingEnabled="true"
-                android:scrollbars="vertical"
-                android:theme="@style/WhiteTextTheme"
-                android:padding="0dp"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="0dp"
-                android:scrollbarStyle="outsideOverlay"
-                tools:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/textList"
-                android:layout_width="194dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="215dp"
-                android:layout_marginBottom="533dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btnAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginEnd="41dp"
-                android:layout_marginBottom="48dp"
-                android:clickable="true"
-                android:onClick="doAdd"
-                app:backgroundTint="#FFFFFF"
-                app:srcCompat="@android:drawable/ic_input_add" />
-
-
-        </RelativeLayout>
-
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnCheckout"
+        android:layout_width="128dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="4dp"
+        android:text="Checkout"
+        android:onClick="popup"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

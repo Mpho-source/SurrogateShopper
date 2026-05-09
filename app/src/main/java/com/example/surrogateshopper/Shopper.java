@@ -1,29 +1,35 @@
 package com.example.surrogateshopper;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.R.layout;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Shopper extends AppCompatActivity {
 
+    String productName = "";
+    String productQty = "";
+    String productSize = "";
+
+    TextView textList;
+    TextView tvBasket;
+    Button btnCheckout;
+    String basketName = "";
+
+    LinkedHashMap<String, Integer> Items = new LinkedHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,120 +38,174 @@ public class Shopper extends AppCompatActivity {
 
         TextView hi = findViewById(R.id.welcomeShopper);
 
-        Intent intent = getIntent();
-        String name = intent.getStringExtra("Shopper_Name");
+        String name = getIntent().getStringExtra("USER_NAME");
 
-        hi.setText("Hi \uD83D\uDC4B " + name);
-
-
+        hi.setText("Hi 👋 " + name);
 
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
-        Button btnGo = findViewById(R.id.btnGo);
-        Button btnDone = findViewById(R.id.btnDone);
-        EditText etProduct = findViewById(R.id.etProduct);
-        ArrayList<String> products = new ArrayList<>();
-        ListView productsList = findViewById(R.id.productsList);
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                TextView textEmpty = findViewById(R.id.textEmpty);
-                textEmpty.setText("");
-                ImageView img = findViewById(R.id.emptyBasket);
-                img.setVisibility(View.INVISIBLE);
+        textList = findViewById(R.id.textList);
+        tvBasket = findViewById(R.id.tvBasket);
+        btnCheckout = findViewById(R.id.btnCheckout);
+        btnCheckout.setVisibility(View.INVISIBLE);
 
-                EditText etProduct = findViewById(R.id.etProduct);
-                etProduct.setVisibility(View.VISIBLE);
-
-                Button btnGo = findViewById(R.id.btnGo);
-                btnGo.setVisibility(View.VISIBLE);
-
-                Button btnDone = findViewById(R.id.btnDone);
-                btnDone.setVisibility(View.VISIBLE);
-
-                TextView welcomeShopper = findViewById(R.id.welcomeShopper);
-                welcomeShopper.setVisibility(View.INVISIBLE);
-
-                TextView textList = findViewById(R.id.textList);
-                textList.setText("");
-                String prod = etProduct.getText().toString();
-                System.out.println(prod);
-            }
-        });
-
-        btnGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String prodEntered = etProduct.getText().toString();
-                products.add(prodEntered);
-
-                String prod = etProduct.getText().toString();
-                //Toast.makeText(Shopper.this, "Added " + prod, Toast.LENGTH_SHORT).show();
-                Snackbar.make(btnGo, "Added " + prod, Snackbar.LENGTH_SHORT).setAction("Close", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                })
-                .show();
-
-                etProduct.setText("");
-
-
-
-
-
-
-            }
-        });
-
-
-        btnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                productsList.setVisibility(View.VISIBLE);
-                etProduct.setVisibility(View.INVISIBLE);
-                btnDone.setVisibility(View.INVISIBLE);
-                btnGo.setVisibility(View.INVISIBLE);
-
-                //ArrayAdapter<String> adapter = new ArrayAdapter<>(Shopper.this, layout.simple_list_item_1, products);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Shopper.this, android.R.layout.simple_list_item_1, products) {
-                    @Override
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        View view = super.getView(position, convertView, parent);
-                        TextView text = (TextView) view.findViewById(android.R.id.text1);
-                        text.setTextColor(Color.WHITE);
-                        text.setPadding(10, 5, 10, 5);
-                        view.setLayoutParams(new AbsListView.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                120 //
-                        ));
-
-                        return view;
-                    }
-                };
-                productsList.setAdapter(adapter);
-
-
-
-                TextView textList = findViewById(R.id.textList);
-                textList.setTextColor(Color.WHITE);
-                textList.setText("MY LIST");
-
-
-
-            }
-        });
-
-
+        tvBasket.setVisibility(View.INVISIBLE);
     }
 
+    public void doShowItem(View view) {
+
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
+
+        View sheetView = getLayoutInflater().inflate(R.layout.dialog_item, null);
+
+        bottomSheet.setContentView(sheetView);
+
+        EditText etProductName = sheetView.findViewById(R.id.etProductName);
+        EditText etQuantity = sheetView.findViewById(R.id.etQuantity);
+        EditText etProductSize = sheetView.findViewById(R.id.etProductSize);
+
+        Button btnAdd = sheetView.findViewById(R.id.btnAddProduct);
+
+        btnAdd.setOnClickListener(v -> {
+
+            btnCheckout.setVisibility(View.VISIBLE);
+            ImageView img = findViewById(R.id.emptyBasket);
+            img.setVisibility(View.INVISIBLE);
+
+            TextView welcome = findViewById(R.id.welcomeShopper);
+            welcome.setVisibility(View.INVISIBLE);
+
+            TextView empty = findViewById(R.id.textEmpty);
+            empty.setVisibility(View.INVISIBLE);
+
+            productName = etProductName.getText().toString().trim();
+            productSize = etProductSize.getText().toString().trim();
+            productQty = etQuantity.getText().toString().trim();
+
+            if (productName.isEmpty() ||
+                    productSize.isEmpty() ||
+                    productQty.isEmpty()) {
+
+                Toast.makeText(
+                        this,
+                        "Please fill all item parts",
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                return;
+            }
+
+            int qty;
+
+            try {
+                qty = Integer.parseInt(productQty);
+            } catch (NumberFormatException e) {
+
+                Toast.makeText(
+                        this,
+                        "Quantity must be a valid number",
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                return;
+            }
+
+            String toStore = productName + " (" + productSize + ")";
+
+            tvBasket.setVisibility(View.VISIBLE);
 
 
+            if (Items.containsKey(toStore)) {
+
+                int oldQty = Items.get(toStore);
+
+                Items.put(toStore, oldQty + qty);
+
+            } else {
+
+                Items.put(toStore, qty);
+            }
+
+            int countItems = Items.size();
+
+            textList.setText(
+                    "You have " + countItems + " item(s) in your basket"
+            );
+
+            displayItemsWithoutListView();
+
+            bottomSheet.dismiss();
+
+            Toast.makeText(
+                    this,
+                    "Item added!",
+                    Toast.LENGTH_SHORT
+            ).show();
 
 
+            btnCheckout.setOnClickListener(view1 -> {
+                popup();
+            });
 
+        });
+
+        bottomSheet.show();
+    }
+
+    private void displayItemsWithoutListView() {
+
+        LinearLayout container = findViewById(R.id.itemsContainer);
+
+
+        container.removeAllViews();
+
+        int itemNumber = 1;
+
+        for (Map.Entry<String, Integer> entry : Items.entrySet()) {
+
+            View rowView = getLayoutInflater().inflate(
+                    R.layout.item_row,
+                    container,
+                    false
+            );
+
+            TextView txtName = rowView.findViewById(R.id.rowName);
+            TextView txtQty = rowView.findViewById(R.id.rowQty);
+
+            txtName.setText(
+                    itemNumber + ". " + entry.getKey()
+            );
+
+            txtQty.setText(
+                    "Qty: " + entry.getValue()
+            );
+
+            container.addView(rowView);
+
+            itemNumber++;
+        }
+    }
+
+    private void popup(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+
+        builder.setView(popupView);
+
+        EditText etName = popupView.findViewById(R.id.etName);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+
+            String name = etName.getText().toString();
+            basketName = name;
+
+            Toast.makeText(this, name, Toast.LENGTH_SHORT).show();
+
+        });
+
+        builder.setNegativeButton("Cancel", null);
+
+        builder.show();
+    }
 }

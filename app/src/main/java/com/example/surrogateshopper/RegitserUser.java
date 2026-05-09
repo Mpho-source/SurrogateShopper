@@ -66,10 +66,10 @@ public class RegitserUser extends AppCompatActivity {
         View sheetView = getLayoutInflater().inflate(R.layout.dialog_address, null);
         bottomSheet.setContentView(sheetView);
 
-        EditText etStreet = sheetView.findViewById(R.id.etStreet);
+        EditText etStreet = sheetView.findViewById(R.id.etProductName);
         EditText etSuburb = sheetView.findViewById(R.id.etSuburb);
-        EditText etCity = sheetView.findViewById(R.id.etCity);
-        Button btnSave = sheetView.findViewById(R.id.btnSaveAddress);
+        EditText etCity = sheetView.findViewById(R.id.etProductSize);
+        Button btnSave = sheetView.findViewById(R.id.btnAddProduct);
 
 
         btnSave.setOnClickListener(v -> {
@@ -125,7 +125,6 @@ public class RegitserUser extends AppCompatActivity {
                 .add("full_name", names)
                 .add("email", emailAddress)
                 .add("password", pass1)
-                .add("salt", "123")
                 .add("street",userStreet)
                 .add("suburb", userSuburb)
                 .add("city", userCity)

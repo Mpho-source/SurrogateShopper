@@ -26,7 +26,7 @@
         <activity
             android:name=".Shopper"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
         <activity
             android:name=".Volunteer"
             android:exported="false"

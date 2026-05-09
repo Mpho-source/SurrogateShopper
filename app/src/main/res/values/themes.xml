@@ -14,13 +14,25 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="WhiteTextTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+
+    <style name="WhiteTextTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:editTextColor">#FFFFFF</item>
         <item name="android:textColorHint">#CCCCCC</item>
     </style>
     <style name="ForceWhite" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="Theme.SurrogateShopper.WithActionBar"
+        parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+
+        <!-- Optional -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
     </style>
 
 </resources>
