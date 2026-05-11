@@ -2,6 +2,8 @@ package com.example.surrogateshopper;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import android.os.Bundle;
 import android.view.View;
@@ -28,6 +30,10 @@ public class Shopper extends AppCompatActivity {
     TextView tvBasket;
     Button btnCheckout;
     String basketName = "";
+    TextView etBasket ;
+    Button btnSendRequest;
+    LinearLayout itemsContainer;
+
 
     LinkedHashMap<String, Integer> Items = new LinkedHashMap<>();
 
@@ -41,6 +47,11 @@ public class Shopper extends AppCompatActivity {
         String name = getIntent().getStringExtra("USER_NAME");
 
         hi.setText("Hi 👋 " + name);
+        LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            String formattedDate = now.format(formatter);
+            System.out.println(formattedDate);
+            System.out.println("HEEELLLOOOO WOOOORLLD");
 
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
 
@@ -48,6 +59,10 @@ public class Shopper extends AppCompatActivity {
         tvBasket = findViewById(R.id.tvBasket);
         btnCheckout = findViewById(R.id.btnCheckout);
         btnCheckout.setVisibility(View.INVISIBLE);
+        etBasket = findViewById(R.id.etBasket);
+        itemsContainer = findViewById(R.id.itemsContainer);
+        btnSendRequest = findViewById(R.id.btnSendRequest);
+
 
         tvBasket.setVisibility(View.INVISIBLE);
     }
@@ -145,6 +160,7 @@ public class Shopper extends AppCompatActivity {
 
             btnCheckout.setOnClickListener(view1 -> {
                 popup();
+
             });
 
         });
@@ -201,6 +217,22 @@ public class Shopper extends AppCompatActivity {
             basketName = name;
 
             Toast.makeText(this, name, Toast.LENGTH_SHORT).show();
+            
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+            String formattedDate = now.format(formatter);
+
+            etBasket.setVisibility(View.VISIBLE);
+
+            etBasket.setText("BASKET: " + name + " " + formattedDate);
+            
+            textList.setVisibility(View.INVISIBLE);
+            tvBasket.setVisibility(View.INVISIBLE);
+            btnCheckout.setVisibility(View.INVISIBLE);
+            itemsContainer.setVisibility(View.INVISIBLE);
+            btnSendRequest.setVisibility(View.VISIBLE);
+            
+
 
         });
 

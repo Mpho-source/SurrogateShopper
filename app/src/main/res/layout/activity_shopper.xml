@@ -11,7 +11,7 @@
     tools:context=".Shopper">
 
 
-    <!-- Welcome Text -->
+  
 
     <TextView
         android:id="@+id/welcomeShopper"
@@ -26,7 +26,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Basket Heading -->
+        <TextView 
+        android:id="@+id/etBasket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text=""
+        android:gravity = "start"
+        android:textSize = "20sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcomeShopper"
+        android:visibility = "gone"/>
+
+  
 
     <TextView
         android:id="@+id/tvBasket"
@@ -36,10 +50,10 @@
         android:text="My Basket"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="textList"
         app:layout_constraintTop_toBottomOf="@id/welcomeShopper" />
 
-    <!-- Basket Count -->
+
 
     <TextView
         android:id="@+id/textList"
@@ -50,9 +64,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvBasket" />
 
-    <!-- Empty Basket Image -->
-
-    <!-- Empty Text -->
+  
 
     <TextView
         android:id="@+id/textEmpty"
@@ -65,9 +77,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emptyBasket" />
 
-    <!-- Scrollable Item List -->
-
-    <!-- Floating Button -->
+   
 
     <ImageView
         android:id="@+id/emptyBasket"
@@ -102,6 +112,8 @@
 
     </ScrollView>
 
+    
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
@@ -126,5 +138,17 @@
         android:onClick="popup"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+        android:id="@+id/btnSendRequest"
+        android:layout_width="128dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="4dp"
+        android:text="Send Request"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility= "gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
