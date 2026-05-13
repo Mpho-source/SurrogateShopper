@@ -30,10 +30,9 @@ public class Shopper extends AppCompatActivity {
     TextView tvBasket;
     Button btnCheckout;
     String basketName = "";
-    TextView etBasket ;
+    TextView etBasket;
     Button btnSendRequest;
     LinearLayout itemsContainer;
-
 
     LinkedHashMap<String, Integer> Items = new LinkedHashMap<>();
 
@@ -48,10 +47,10 @@ public class Shopper extends AppCompatActivity {
 
         hi.setText("Hi 👋 " + name);
         LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-            String formattedDate = now.format(formatter);
-            System.out.println(formattedDate);
-            System.out.println("HEEELLLOOOO WOOOORLLD");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        String formattedDate = now.format(formatter);
+        System.out.println(formattedDate);
+        System.out.println("HEEELLLOOOO WOOOORLLD");
 
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
 
@@ -62,7 +61,6 @@ public class Shopper extends AppCompatActivity {
         etBasket = findViewById(R.id.etBasket);
         itemsContainer = findViewById(R.id.itemsContainer);
         btnSendRequest = findViewById(R.id.btnSendRequest);
-
 
         tvBasket.setVisibility(View.INVISIBLE);
     }
@@ -104,8 +102,7 @@ public class Shopper extends AppCompatActivity {
                 Toast.makeText(
                         this,
                         "Please fill all item parts",
-                        Toast.LENGTH_SHORT
-                ).show();
+                        Toast.LENGTH_SHORT).show();
 
                 return;
             }
@@ -119,16 +116,15 @@ public class Shopper extends AppCompatActivity {
                 Toast.makeText(
                         this,
                         "Quantity must be a valid number",
-                        Toast.LENGTH_SHORT
-                ).show();
+                        Toast.LENGTH_SHORT).show();
 
                 return;
             }
 
             String toStore = productName + " (" + productSize + ")";
+            addItemsToDB(productName, qty, productSize);
 
             tvBasket.setVisibility(View.VISIBLE);
-
 
             if (Items.containsKey(toStore)) {
 
@@ -144,8 +140,7 @@ public class Shopper extends AppCompatActivity {
             int countItems = Items.size();
 
             textList.setText(
-                    "You have " + countItems + " item(s) in your basket"
-            );
+                    "You have " + countItems + " item(s) in your basket");
 
             displayItemsWithoutListView();
 
@@ -154,9 +149,7 @@ public class Shopper extends AppCompatActivity {
             Toast.makeText(
                     this,
                     "Item added!",
-                    Toast.LENGTH_SHORT
-            ).show();
-
+                    Toast.LENGTH_SHORT).show();
 
             btnCheckout.setOnClickListener(view1 -> {
                 popup();
@@ -172,7 +165,6 @@ public class Shopper extends AppCompatActivity {
 
         LinearLayout container = findViewById(R.id.itemsContainer);
 
-
         container.removeAllViews();
 
         int itemNumber = 1;
@@ -182,19 +174,16 @@ public class Shopper extends AppCompatActivity {
             View rowView = getLayoutInflater().inflate(
                     R.layout.item_row,
                     container,
-                    false
-            );
+                    false);
 
             TextView txtName = rowView.findViewById(R.id.rowName);
             TextView txtQty = rowView.findViewById(R.id.rowQty);
 
             txtName.setText(
-                    itemNumber + ". " + entry.getKey()
-            );
+                    itemNumber + ". " + entry.getKey());
 
             txtQty.setText(
-                    "Qty: " + entry.getValue()
-            );
+                    "Qty: " + entry.getValue());
 
             container.addView(rowView);
 
@@ -202,7 +191,7 @@ public class Shopper extends AppCompatActivity {
         }
     }
 
-    private void popup(){
+    private void popup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
@@ -217,7 +206,7 @@ public class Shopper extends AppCompatActivity {
             basketName = name;
 
             Toast.makeText(this, name, Toast.LENGTH_SHORT).show();
-            
+
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
             String formattedDate = now.format(formatter);
@@ -225,19 +214,60 @@ public class Shopper extends AppCompatActivity {
             etBasket.setVisibility(View.VISIBLE);
 
             etBasket.setText("BASKET: " + name + " " + formattedDate);
-            
+
             textList.setVisibility(View.INVISIBLE);
             tvBasket.setVisibility(View.INVISIBLE);
             btnCheckout.setVisibility(View.INVISIBLE);
             itemsContainer.setVisibility(View.INVISIBLE);
             btnSendRequest.setVisibility(View.VISIBLE);
-            
-
 
         });
 
         builder.setNegativeButton("Cancel", null);
 
         builder.show();
+    }
+
+    public void addItemsToDB(String name, int quantity, String size) {
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(5, java.util.concurrent.TimeUnit.SECONDS)
+                .build();
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("name", name)
+                .add("quantity", quantity)
+                .add("size", size)
+                .build();
+
+        Request request = new Request.Builder()
+                .url("https://wmc.ms.wits.ac.za/students/sgroup2715/products_items.php")
+                .post(formBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                final String errorType = e.getClass().getSimpleName();
+                final String errorMsg = e.getMessage();
+                runOnUiThread(() -> {
+                    Toast.makeText(RegitserUser.this, errorType + ": " + errorMsg, Toast.LENGTH_LONG).show();
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String res = response.body().string();
+                runOnUiThread(() -> {
+                    if (res.contains("success")) {
+                        Toast.makeText(RegitserUser.this, "Success", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(RegitserUser.this, "Server error: " + res, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
 }

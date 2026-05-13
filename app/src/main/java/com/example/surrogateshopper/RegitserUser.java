@@ -80,7 +80,7 @@ public class RegitserUser extends AppCompatActivity {
             if (userStreet.isEmpty() || userSuburb.isEmpty() || userCity.isEmpty()) {
                 Toast.makeText(this, "Please fill all address parts", Toast.LENGTH_SHORT).show();
             } else {
-                bottomSheet.dismiss(); // Close the drawer
+                bottomSheet.dismiss(); 
                 Toast.makeText(this, "Address saved!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -160,6 +160,10 @@ public class RegitserUser extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    public void addItemsToDB(String name, int quantity, String size){
+
     }
 
     public boolean validatePass(String pass1, String pass2){
