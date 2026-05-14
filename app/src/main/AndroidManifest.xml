@@ -12,10 +12,15 @@
         android:icon="@drawable/pgae_bg"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.SurrogateShopper"
-
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".OrderDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Orders"
+            android:exported="false" />
         <activity
             android:name=".RegitserUser"
             android:exported="false" />
@@ -31,7 +36,7 @@
             android:name=".Volunteer"
             android:exported="false"
             android:icon="@drawable/pgae_bg"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:theme="@style/Theme.SurrogateShopper"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -28,7 +28,6 @@
     <style name="Theme.SurrogateShopper.WithActionBar"
         parent="Theme.MaterialComponents.DayNight.DarkActionBar">
 
-        <!-- Optional -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@android:color/white</item>

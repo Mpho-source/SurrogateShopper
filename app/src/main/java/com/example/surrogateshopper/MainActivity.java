@@ -74,10 +74,22 @@ public class MainActivity extends AppCompatActivity {
                         String name = parts.length > 2 ? parts[2] : "";
 
                         Intent intent;
+
                         if (role.equalsIgnoreCase("Shopper")) {
                             intent = new Intent(MainActivity.this, Shopper.class);
+
+
+                            intent.putExtra("USER_NAME", name);
+                            intent.putExtra("USER_EMAIL", email);
+                            startActivity(intent);
+                            finish();
+
                         } else if (role.equalsIgnoreCase("Volunteer")) {
                             intent = new Intent(MainActivity.this, Volunteer.class);
+                            intent.putExtra("USER_NAME", name);
+                            intent.putExtra("USER_EMAIL", email);
+                            startActivity(intent);
+                            finish();
                         } else {
                             Toast.makeText(MainActivity.this, "Role error: " + res, Toast.LENGTH_LONG).show();
                             return;
@@ -85,9 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
                         System.out.println( "Output +++++++++++" + name);
 
-                        intent.putExtra("USER_NAME", name);
-                        startActivity(intent);
-                        finish();
+
                     } else if (res.equals("invalid")) {
                         Toast.makeText(getApplicationContext(), "Wrong email or password", Toast.LENGTH_SHORT).show();
                     } else {
