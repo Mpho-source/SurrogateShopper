@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backg"
+    android:paddingLeft="-5dp"
+    tools:context=".MainActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.7"
+        android:background="@drawable/pgae_bg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="175dp"
+
+            android:layout_marginBottom="21dp"
+            android:gravity="center"
+
+            android:orientation="vertical"
+            android:padding="28dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_icon"></ImageView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Surrogate Shopper"
+                android:textColor="@color/black"
+                android:textSize="32sp"
+                android:textStyle="bold"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="180dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp">
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-20dp"
+        app:cardCornerRadius="28dp"
+
+        >
+
+
+        <LinearLayout
+            android:id="@+id/loginContent"
+            android:layout_width="match_parent"
+            android:layout_height="603dp"
+            android:background="@drawable/pgae_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="120dp">
+
+            <ImageView
+                android:layout_width="136dp"
+                android:layout_height="106dp"
+                android:src="@drawable/account_icon">
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/welcomeLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Welcome"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/enterDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.7"
+                android:gravity="center"
+                android:text="Choose An Activity"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"></View>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="206dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="106dp">
+
+                    <RadioButton
+                        android:id="@+id/radShop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Shop" />
+
+                    <RadioButton
+                        android:id="@+id/radVolunteer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Volunteer" />
+                </RadioGroup>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnpickActivity"
+                    android:layout_width="370dp"
+                    android:layout_height="67dp"
+                    android:backgroundTint="#2196F3"
+                    android:onClick="doSignIn"
+                    android:text="next"
+                    app:cornerRadius="32dp">
+
+
+                </com.google.android.material.button.MaterialButton>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

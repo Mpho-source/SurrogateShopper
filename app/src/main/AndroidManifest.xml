@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".pickActivity"
+            android:exported="false" />
+        <activity
             android:name=".OrderDetailsActivity"
             android:exported="false" />
         <activity
@@ -36,7 +39,7 @@
             android:name=".Volunteer"
             android:exported="false"
             android:icon="@drawable/pgae_bg"
-            android:theme="@style/Theme.SurrogateShopper"></activity>
+            android:theme="@style/Theme.SurrogateShopper" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

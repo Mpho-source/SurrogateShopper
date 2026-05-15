@@ -31,8 +31,6 @@ public class RegitserUser extends AppCompatActivity {
     String pass2 ;
     EditText etName;
     String names;
-    RadioButton userVolunteer;
-    RadioButton userShopper;
     EditText etEmail;
 
 
@@ -54,8 +52,7 @@ public class RegitserUser extends AppCompatActivity {
 
         etName = findViewById(R.id.etName);
 
-        userVolunteer = findViewById(R.id.userVolunteer);
-        userShopper = findViewById(R.id.userShopper);
+
         etEmail = findViewById(R.id.etEmail);
 
     }
@@ -97,16 +94,7 @@ public class RegitserUser extends AppCompatActivity {
         String role = "";
 
 
-
-        if(userShopper.isChecked()){
-            role = "Shopper";
-        }
-        else if(userVolunteer.isChecked()){
-            role = "Volunteer";
-        }
-
-
-        if (names.isEmpty() || emailAddress.isEmpty() || pass1.isEmpty() || (!userShopper.isChecked() && !userVolunteer.isChecked())) {
+        if (names.isEmpty() || emailAddress.isEmpty() || pass1.isEmpty() ) {
             Toast.makeText(this, "Fields missing", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -128,7 +116,7 @@ public class RegitserUser extends AppCompatActivity {
                 .add("street",userStreet)
                 .add("suburb", userSuburb)
                 .add("city", userCity)
-                .add("role", role)
+
                 .build();
 
 

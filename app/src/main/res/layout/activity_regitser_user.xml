@@ -94,33 +94,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="15dp"></View>
 
-            <RadioGroup
-                android:id="@+id/userType"
-                android:layout_width="match_parent"
-                android:layout_height="66dp"
-                android:layout_marginTop="12.5dp"
-                android:layout_marginBottom="12.5dp">
-
-                <RadioButton
-                    android:id="@+id/userVolunteer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:buttonTint="#101010"
-                    android:text="Volunteer"
-                    android:textSize="18sp" />
-
-                <RadioButton
-                    android:id="@+id/userShopper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:buttonTint="#070707"
-                    android:text="Shopper"
-                    android:textSize="18sp" />
-
-            </RadioGroup>
-
             <LinearLayout
                 android:id="@+id/credentials"
                 android:layout_width="match_parent"

@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public void doSignIn(View view) {
         String email = etName.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-
+    //
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
             return;
@@ -66,42 +66,51 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+
                 final String res = response.body().string().trim();
+
                 runOnUiThread(() -> {
+
                     if (res.startsWith("success")) {
+
+
                         String[] parts = res.split(":");
+
+
                         String role = parts.length > 1 ? parts[1] : "";
                         String name = parts.length > 2 ? parts[2] : "";
 
-                        Intent intent;
 
-                        if (role.equalsIgnoreCase("Shopper")) {
-                            intent = new Intent(MainActivity.this, Shopper.class);
+                        Intent intent = new Intent(MainActivity.this, pickActivity.class);
 
 
-                            intent.putExtra("USER_NAME", name);
-                            intent.putExtra("USER_EMAIL", email);
-                            startActivity(intent);
-                            finish();
-
-                        } else if (role.equalsIgnoreCase("Volunteer")) {
-                            intent = new Intent(MainActivity.this, Volunteer.class);
-                            intent.putExtra("USER_NAME", name);
-                            intent.putExtra("USER_EMAIL", email);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Role error: " + res, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        System.out.println( "Output +++++++++++" + name);
+                        intent.putExtra("USER_NAME", name);
+                        intent.putExtra("USER_EMAIL", email);
 
 
-                    } else if (res.equals("invalid")) {
-                        Toast.makeText(getApplicationContext(), "Wrong email or password", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Server Error: " + res, Toast.LENGTH_LONG).show();
+                        intent.putExtra("USER_ROLE", role);
+
+                        startActivity(intent);
+
+                        finish();
+
+                    }
+                    else if (res.equals("invalid")) {
+
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Wrong email or password",
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                    }
+                    else {
+
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Server Error: " + res,
+                                Toast.LENGTH_LONG
+                        ).show();
                     }
                 });
             }
