@@ -4,41 +4,54 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="6dp">
+    app:cardCornerRadius="15dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvBasketName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:text="Basket #101"
+            android:textColor="#333333"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvShopperName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvBasketName"
+            android:text="Shopper: Mpho"
+            android:textColor="#666666"
+            android:textSize="16sp" />
 
-        <!-- THIS WAS THE MISSING ONE THAT CRASHED YOU -->
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pending"
-            android:textStyle="italic"/>
+            android:layout_below="@id/tvShopperName"
+            android:layout_marginTop="4dp"
+            android:text="Status: Pending"
+            android:textColor="#FF9800"
+            android:textStyle="italic" />
 
         <Button
             android:id="@+id/btnAcceptOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Accept"/>
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/tvStatus"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#4CAF50"
+            android:text="ACCEPT"
+            android:textColor="#FFFFFF" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

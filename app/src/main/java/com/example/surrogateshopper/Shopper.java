@@ -75,6 +75,21 @@ public class Shopper extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopper);
 
+        // --- TOOLBAR & NAV DRAWER FIX ---
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_side);
+
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Make hamburger icon white
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
+        // --------------------------------
+
         emailForDB = getIntent().getStringExtra("USER_EMAIL");
 
         TextView hi = findViewById(R.id.welcomeShopper);
@@ -100,32 +115,18 @@ public class Shopper extends AppCompatActivity {
         basketItemsExpanded = findViewById(R.id.basketItemsExpanded);
         basketDivider= findViewById(R.id.basketDivider);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_side);
-
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.nav_logout) {
-                    Intent intent = new Intent(Shopper.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else if(id == R.id.nav_order){
-                    Intent intent = new Intent(Shopper.this, Orders.class);
-                    startActivity(intent);
-                }
-                drawerLayout.closeDrawers();
-                return true;
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_logout) {
+                Intent intent = new Intent(Shopper.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else if(id == R.id.nav_order){
+                Intent intent = new Intent(Shopper.this, Orders.class);
+                startActivity(intent);
             }
+            drawerLayout.closeDrawers();
+            return true;
         });
     }
 

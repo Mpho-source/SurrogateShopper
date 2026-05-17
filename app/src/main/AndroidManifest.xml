@@ -41,12 +41,12 @@
         <activity
             android:name=".Shopper"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+            android:theme="@style/Theme.SurrogateShopper" />
 
         <activity
             android:name=".Volunteer"
             android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+            android:theme="@style/Theme.SurrogateShopper" />
 
         <activity
             android:name=".MainActivity"

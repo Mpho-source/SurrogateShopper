@@ -6,15 +6,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.google.android.material.navigation.NavigationView;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +19,6 @@ public class Orders extends AppCompatActivity {
 
     TextView tvOrderBasket, tvOrderStatus;
     LinearLayout itemsContainer;
-
-    // Nav variables
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle toggle;
@@ -33,18 +28,17 @@ public class Orders extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders);
 
+        // --- TOOLBAR & DRAWER SETUP ---
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_side);
 
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -55,25 +49,23 @@ public class Orders extends AppCompatActivity {
                 startActivity(intent);
                 finishAffinity();
             }
-            drawerLayout.closeDrawers();
+            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-
+        // --- VIEW BINDING ---
         tvOrderBasket = findViewById(R.id.tvOrderBasket);
         tvOrderStatus = findViewById(R.id.tvOrderStatus);
         itemsContainer = findViewById(R.id.itemsContainerOrders);
-
         View basketCard = findViewById(R.id.basketCard);
         TextView textEmpty = findViewById(R.id.textEmpty);
         TextView headerTitle = findViewById(R.id.headerTitle);
 
-
+        // --- DATA LOGIC ---
         HashMap<String, Integer> items = (HashMap<String, Integer>) getIntent().getSerializableExtra("BASKET_ITEMS");
         String basketName = getIntent().getStringExtra("BASKET_NAME");
 
         if (items != null && !items.isEmpty()) {
-
             basketCard.setVisibility(View.VISIBLE);
             headerTitle.setVisibility(View.VISIBLE);
             if (textEmpty != null) textEmpty.setVisibility(View.GONE);
@@ -83,10 +75,8 @@ public class Orders extends AppCompatActivity {
 
             displayOrderItems(items);
         } else {
-
             basketCard.setVisibility(View.GONE);
             headerTitle.setVisibility(View.GONE);
-
             if (textEmpty != null) {
                 textEmpty.setVisibility(View.VISIBLE);
                 textEmpty.setText("You have no active orders at the moment.");
@@ -100,13 +90,12 @@ public class Orders extends AppCompatActivity {
         for (Map.Entry<String, Integer> entry : items.entrySet()) {
             TextView row = new TextView(this);
             row.setText(number + ". " + entry.getKey() + " x" + entry.getValue());
-            row.setTextColor(0xFFFFFFFF); // White text for the purple card
+            row.setTextColor(0xFFFFFFFF);
             row.setPadding(0, 10, 0, 10);
             itemsContainer.addView(row);
             number++;
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

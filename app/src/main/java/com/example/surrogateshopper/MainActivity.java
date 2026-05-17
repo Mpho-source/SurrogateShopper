@@ -3,11 +3,8 @@ package com.example.surrogateshopper;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Toast;
 import java.io.IOException;
 import okhttp3.Call;
@@ -20,7 +17,6 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    RadioButton radShopper, radVolunteer;
     EditText etName, etPassword;
 
     @Override
@@ -35,16 +31,13 @@ public class MainActivity extends AppCompatActivity {
     public void doSignIn(View view) {
         String email = etName.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-    //
+
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
-                .build();
+        OkHttpClient client = new OkHttpClient();
 
         RequestBody formBody = new FormBody.Builder()
                 .add("email", email)
@@ -59,58 +52,33 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-
                 final String res = response.body().string().trim();
 
                 runOnUiThread(() -> {
-
+                    // Inside MainActivity.java -> onResponse -> runOnUiThread
                     if (res.startsWith("success")) {
-
-
                         String[] parts = res.split(":");
 
 
-                        String role = parts.length > 1 ? parts[1] : "";
-                        String name = parts.length > 2 ? parts[2] : "";
 
+                        String realName = parts.length > 1 ? parts[1] : "User";
+                        String realId = parts.length > 2 ? parts[2] : "";
 
                         Intent intent = new Intent(MainActivity.this, pickActivity.class);
-
-
-                        intent.putExtra("USER_NAME", name);
+                        intent.putExtra("USER_NAME", realName); // Correctly sets the name string
+                        intent.putExtra("USER_ID", realId);     // Correctly sets the ID string
                         intent.putExtra("USER_EMAIL", email);
-
-
-                        intent.putExtra("USER_ROLE", role);
-
                         startActivity(intent);
-
                         finish();
-
-                    }
-                    else if (res.equals("invalid")) {
-
-                        Toast.makeText(
-                                getApplicationContext(),
-                                "Wrong email or password",
-                                Toast.LENGTH_SHORT
-                        ).show();
-
-                    }
-                    else {
-
-                        Toast.makeText(
-                                getApplicationContext(),
-                                "Server Error: " + res,
-                                Toast.LENGTH_LONG
-                        ).show();
+                    } else if (res.equals("invalid")) {
+                        Toast.makeText(getApplicationContext(), "Wrong email or password", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Server Error: " + res, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -118,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void doDirectRegister(View view){
-        Intent intent = new Intent(MainActivity.this, RegitserUser.class);
-        intent.putExtra("Register", "");
-        startActivity(intent);
+        startActivity(new Intent(MainActivity.this, RegitserUser.class));
     }
 }
