@@ -43,17 +43,10 @@
         android:backgroundTint="#FF9800"/>
 
     <Button
-        android:id="@+id/btnDelivering"
+        android:id="@+id/btnOutForDelivery"
         android:text="OUT FOR DELIVERY"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#2196F3"/>
-
-    <Button
-        android:id="@+id/btnComplete"
-        android:text="COMPLETE ORDER"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#4CAF50"/>
 
 </LinearLayout>

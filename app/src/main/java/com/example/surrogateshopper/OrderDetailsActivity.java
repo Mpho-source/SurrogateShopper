@@ -1,5 +1,6 @@
 package com.example.surrogateshopper;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,19 +23,21 @@ public class OrderDetailsActivity extends AppCompatActivity {
     private TextView tvItems, tvCurrentStatus;
     private String orderId;
 
+    // Track destination data for the map
+    private double destLat = 0.0;
+    private double destLng = 0.0;
+    private String destAddress = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_details);
 
-        // 1. Initialize UI Elements
         tvItems = findViewById(R.id.tvItems);
         tvCurrentStatus = findViewById(R.id.tvCurrentStatus);
         Button btnShopping = findViewById(R.id.btnShopping);
-        Button btnDelivering = findViewById(R.id.btnDelivering);
-        Button btnComplete = findViewById(R.id.btnComplete);
+        Button btnDelivering = findViewById(R.id.btnOutForDelivery);
 
-        // 2. Get Data from Intent
         orderId = getIntent().getStringExtra("ORDER_ID");
         String initialStatus = getIntent().getStringExtra("STATUS");
 
@@ -46,13 +49,16 @@ public class OrderDetailsActivity extends AppCompatActivity {
             fetchBasket(orderId);
         }
 
-        // 3. Button Click Listeners
-        btnShopping.setOnClickListener(v -> updateStatus(orderId, "Shopping", tvCurrentStatus));
-        btnDelivering.setOnClickListener(v -> updateStatus(orderId, "Delivering", tvCurrentStatus));
-        btnComplete.setOnClickListener(v -> updateStatus(orderId, "Completed", tvCurrentStatus));
+        // Logic for Shopping
+        btnShopping.setOnClickListener(v -> updateStatus(orderId, "Shopping"));
+
+        // Logic for Out for Delivery -> This opens the Navigate Activity
+        btnDelivering.setOnClickListener(v -> {
+            updateStatus(orderId, "Out for Delivery");
+        });
     }
 
-    private void updateStatus(String requestId, String newStatus, TextView statusLabel) {
+    private void updateStatus(String requestId, String newStatus) {
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
                 .add("request_id", requestId)
@@ -69,11 +75,17 @@ public class OrderDetailsActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     runOnUiThread(() -> {
-                        statusLabel.setText("Current Status: " + newStatus);
-                        Toast.makeText(OrderDetailsActivity.this, "Status updated to: " + newStatus, Toast.LENGTH_SHORT).show();
+                        tvCurrentStatus.setText("Current Status: " + newStatus);
+                        Toast.makeText(OrderDetailsActivity.this, "Status: " + newStatus, Toast.LENGTH_SHORT).show();
 
-                        if (newStatus.equals("Completed")) {
-                            finish(); // Closes activity and goes back to the list
+                        // If they click Out for Delivery, take them to the Map
+                        if (newStatus.equals("Out for Delivery")) {
+                            Intent intent = new Intent(OrderDetailsActivity.this, navigate.class);
+                            intent.putExtra("REQUEST_ID", orderId);
+                            intent.putExtra("LATITUDE", destLat);
+                            intent.putExtra("LONGITUDE", destLng);
+                            intent.putExtra("ADDRESS", destAddress);
+                            startActivity(intent);
                         }
                     });
                 }
@@ -81,7 +93,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> Toast.makeText(OrderDetailsActivity.this, "Server Update Failed", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(OrderDetailsActivity.this, "Update Failed", Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -103,11 +115,19 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     try {
-                        JSONArray jsonArray = new JSONArray(data);
+                        JSONObject jsonResponse = new JSONObject(data);
+
+                        // Store coordinates and address for the Map
+                        destAddress = jsonResponse.getString("request_address");
+                        destLat = jsonResponse.getDouble("request_latitude");
+                        destLng = jsonResponse.getDouble("request_longitude");
+
+                        // Parse the Items array
+                        JSONArray itemsArray = jsonResponse.getJSONArray("items");
                         StringBuilder sb = new StringBuilder();
 
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject item = jsonArray.getJSONObject(i);
+                        for (int i = 0; i < itemsArray.length(); i++) {
+                            JSONObject item = itemsArray.getJSONObject(i);
                             sb.append("• ").append(item.getString("name"))
                                     .append(" (").append(item.getString("size")).append(")")
                                     .append(" x").append(item.getString("quantity"))
@@ -115,11 +135,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
                         }
 
                         runOnUiThread(() -> {
-                            if (jsonArray.length() == 0) {
-                                tvItems.setText("Basket is empty.");
-                            } else {
-                                tvItems.setText(sb.toString());
-                            }
+                            tvItems.setText(sb.length() == 0 ? "No items in basket." : sb.toString());
                         });
                     } catch (JSONException e) { e.printStackTrace(); }
                 }
@@ -127,7 +143,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> tvItems.setText("Error loading items."));
+                runOnUiThread(() -> tvItems.setText("Error loading details."));
             }
         });
     }

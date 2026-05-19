@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import java.text.SimpleDateFormat;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -18,6 +19,8 @@ import okhttp3.Response;
 import java.io.IOException;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +58,9 @@ public class Shopper extends AppCompatActivity {
     Button btnSendRequest;
     LinearLayout itemsContainer;
 
+    //geocoding varibales
+    String street,suburb,city,address;
+    double latitude,longitude;
     HashMap<String, Integer> Items = new HashMap<>();
 
     MaterialCardView basketCard;
@@ -105,6 +111,7 @@ public class Shopper extends AppCompatActivity {
         itemsContainer = findViewById(R.id.itemsContainer);
         btnSendRequest = findViewById(R.id.btnSendRequest);
         btnAdd = findViewById(R.id.btnAdd);
+
         tvBasket.setVisibility(View.INVISIBLE);
 
         basketCard = findViewById(R.id.basketCard);
@@ -261,6 +268,10 @@ public class Shopper extends AppCompatActivity {
                             View headerView = navigationView.getHeaderView(0);
                             TextView nName = headerView.findViewById(R.id.nav_user_name);
                             TextView nEmail = headerView.findViewById(R.id.nav_user_email);
+                            street= json.getString("street");
+                            suburb=json.getString("suburb");
+                            city=json.getString("city");
+                            address=street+","+suburb+","+city;
                             nName.setText(json.getString("full_name"));
                             nEmail.setText(json.getString("email"));
                         } catch (JSONException e) { e.printStackTrace(); }
@@ -292,29 +303,53 @@ public class Shopper extends AppCompatActivity {
             }
         } catch (JSONException e) { e.printStackTrace(); }
 
-        OkHttpClient client = new OkHttpClient();
-        RequestBody formBody = new FormBody.Builder()
-                .add("email", email)
-                .add("items_json", jsonArray.toString())
-                .build();
+        new Thread(() -> {
+            Geocoder geocoder = new Geocoder(this);
+            try {
+                List<Address> addressList = geocoder.getFromLocationName(address, 1);
+                if (addressList != null && !addressList.isEmpty()) {
+                     latitude = addressList.get(0).getLatitude();
+                     longitude = addressList.get(0).getLongitude();
 
-        Request request = new Request.Builder()
-                .url("https://wmc.ms.wits.ac.za/students/sgroup2715/products_items.php")
-                .post(formBody)
-                .build();
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {}
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String res = response.body().string();
-                    runOnUiThread(() -> Toast.makeText(Shopper.this, res, Toast.LENGTH_LONG).show());
+                    runOnUiThread(() -> Toast.makeText(this, "Address saved!", Toast.LENGTH_SHORT).show());
+                } else {
+                    runOnUiThread(() -> Toast.makeText(this, "Could not find coordinates for this address.", Toast.LENGTH_LONG).show());
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Network error finding coordinates.", Toast.LENGTH_SHORT).show());
             }
-        });
+
+            OkHttpClient client = new OkHttpClient();
+            RequestBody formBody = new FormBody.Builder()
+                    .add("email", email)
+                    .add("items_json", jsonArray.toString())
+                    .add("latitude", String.valueOf(latitude))
+                    .add("longitude",String.valueOf(longitude))
+                    .add("address",String.valueOf(address))
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url("https://wmc.ms.wits.ac.za/students/sgroup2715/products_items.php")
+                    .post(formBody)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {}
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String res = response.body().string();
+                        runOnUiThread(() -> Toast.makeText(Shopper.this, res, Toast.LENGTH_LONG).show());
+                    }
+                }
+            });
+        }).start();
+
+
     }
 
     public void doSendRequest(View view){
