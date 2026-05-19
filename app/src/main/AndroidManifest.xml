@@ -31,6 +31,11 @@
         <activity
             android:name=".Orders"
             android:exported="false" />
+
+
+
+        <activity android:name=".ShopperMessage" android:exported="false" />
+
         <activity
             android:name=".RegitserUser"
             android:exported="false" />

@@ -77,7 +77,7 @@ public class RegitserUser extends AppCompatActivity {
             if (userStreet.isEmpty() || userSuburb.isEmpty() || userCity.isEmpty()) {
                 Toast.makeText(this, "Please fill all address parts", Toast.LENGTH_SHORT).show();
             } else {
-                bottomSheet.dismiss(); 
+                bottomSheet.dismiss();
                 Toast.makeText(this, "Address saved!", Toast.LENGTH_SHORT).show();
             }
         });

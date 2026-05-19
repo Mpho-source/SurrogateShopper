@@ -2,9 +2,7 @@ package com.example.surrogateshopper.ui.login;
 
 import androidx.annotation.Nullable;
 
-/**
- * Data validation state of the login form.
- */
+
 class LoginFormState {
     @Nullable
     private Integer usernameError;

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 final String res = response.body().string().trim();
 
                 runOnUiThread(() -> {
-                    // Inside MainActivity.java -> onResponse -> runOnUiThread
+
                     if (res.startsWith("success")) {
                         String[] parts = res.split(":");
 
@@ -69,9 +69,16 @@ public class MainActivity extends AppCompatActivity {
                         String realName = parts.length > 1 ? parts[1] : "User";
                         String realId = parts.length > 2 ? parts[2] : "";
 
+                        getSharedPreferences("UserSession", MODE_PRIVATE)
+                                .edit()
+                                .putString("userEmail", email)
+                                .putString("userName", realName)
+                                .putString("userId", realId)
+                                .apply();
+
                         Intent intent = new Intent(MainActivity.this, pickActivity.class);
-                        intent.putExtra("USER_NAME", realName); // Correctly sets the name string
-                        intent.putExtra("USER_ID", realId);     // Correctly sets the ID string
+                        intent.putExtra("USER_NAME", realName);
+                        intent.putExtra("USER_ID", realId);
                         intent.putExtra("USER_EMAIL", email);
                         startActivity(intent);
                         finish();

@@ -4,16 +4,17 @@
     android:padding="20dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@drawable/pgae_bg">
 
     <TextView
         android:id="@+id/tvOrderHeader"
-        android:text="Order Summary"
-        android:textSize="22sp"
+        android:text="Order Details"
+        android:textSize="24sp"
         android:textStyle="bold"
+        android:textColor="@android:color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="12dp" />
 
     <TextView
         android:id="@+id/tvItems"
@@ -21,9 +22,10 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:textSize="16sp"
-        android:padding="10dp"
-        android:background="@android:color/white"
-        android:elevation="2dp"/>
+        android:textColor="@android:color/white"
+        android:padding="14dp"
+        android:background="@color/purple_500"
+        android:elevation="2dp" />
 
     <TextView
         android:id="@+id/tvCurrentStatus"
@@ -31,8 +33,8 @@
         android:layout_height="wrap_content"
         android:text="Current Status: Accepted"
         android:layout_marginTop="15dp"
-        android:textStyle="italic"
-        android:textColor="#333333"/>
+        android:textStyle="bold"
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btnShopping"
@@ -40,13 +42,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="#FF9800"/>
+        android:textColor="@android:color/white"
+        android:backgroundTint="#FF9800" />
 
     <Button
         android:id="@+id/btnOutForDelivery"
         android:text="OUT FOR DELIVERY"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#2196F3"/>
+        android:textColor="@android:color/white"
+        android:backgroundTint="#2196F3" />
 
 </LinearLayout>

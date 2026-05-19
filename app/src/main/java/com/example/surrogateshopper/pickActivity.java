@@ -20,7 +20,7 @@ public class pickActivity extends AppCompatActivity {
         radShop = findViewById(R.id.radShop);
         radVolunteer = findViewById(R.id.radVolunteer);
 
-        // Retrieve data from MainActivity
+
         name = getIntent().getStringExtra("USER_NAME");
         email = getIntent().getStringExtra("USER_EMAIL");
         userId = getIntent().getStringExtra("USER_ID");
@@ -29,7 +29,7 @@ public class pickActivity extends AppCompatActivity {
     public void doSignIn(View view) {
         Intent intent;
 
-        // Get the data that MainActivity sent
+
         String name = getIntent().getStringExtra("USER_NAME");
         String email = getIntent().getStringExtra("USER_EMAIL");
         String id = getIntent().getStringExtra("USER_ID");
@@ -43,7 +43,7 @@ public class pickActivity extends AppCompatActivity {
             return;
         }
 
-        // Pass the actual Name and ID to the Shopper activity
+
         intent.putExtra("USER_NAME", name);
         intent.putExtra("USER_ID", id);
         intent.putExtra("USER_EMAIL", email);

@@ -58,7 +58,7 @@ public class Shopper extends AppCompatActivity {
     Button btnSendRequest;
     LinearLayout itemsContainer;
 
-    //geocoding varibales
+
     String street,suburb,city,address;
     double latitude,longitude;
     HashMap<String, Integer> Items = new HashMap<>();
@@ -81,7 +81,7 @@ public class Shopper extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopper);
 
-        // --- TOOLBAR & NAV DRAWER FIX ---
+
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -92,14 +92,20 @@ public class Shopper extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Make hamburger icon white
+
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
-        // --------------------------------
+
 
         emailForDB = getIntent().getStringExtra("USER_EMAIL");
+        if (emailForDB == null || emailForDB.trim().isEmpty()) {
+            emailForDB = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userEmail", "");
+        }
 
         TextView hi = findViewById(R.id.welcomeShopper);
         String name = getIntent().getStringExtra("USER_NAME");
+        if (name == null || name.trim().isEmpty()) {
+            name = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "User");
+        }
         hi.setText("Hi 👋 " + name);
 
         getDetails(emailForDB);
@@ -130,6 +136,11 @@ public class Shopper extends AppCompatActivity {
                 finish();
             } else if(id == R.id.nav_order){
                 Intent intent = new Intent(Shopper.this, Orders.class);
+
+                intent.putExtra("USER_EMAIL", emailForDB);
+                intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", ""));
+                intent.putExtra("USER_ID", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", ""));
+                intent.putExtra("ORDER_MODE", "shopper");
                 startActivity(intent);
             }
             drawerLayout.closeDrawers();
@@ -308,8 +319,8 @@ public class Shopper extends AppCompatActivity {
             try {
                 List<Address> addressList = geocoder.getFromLocationName(address, 1);
                 if (addressList != null && !addressList.isEmpty()) {
-                     latitude = addressList.get(0).getLatitude();
-                     longitude = addressList.get(0).getLongitude();
+                    latitude = addressList.get(0).getLatitude();
+                    longitude = addressList.get(0).getLongitude();
 
 
                     runOnUiThread(() -> Toast.makeText(this, "Address saved!", Toast.LENGTH_SHORT).show());
@@ -325,6 +336,7 @@ public class Shopper extends AppCompatActivity {
             RequestBody formBody = new FormBody.Builder()
                     .add("email", email)
                     .add("items_json", jsonArray.toString())
+                    .add("basket_name", basketName == null || basketName.trim().isEmpty() ? "My Basket" : basketName.trim())
                     .add("latitude", String.valueOf(latitude))
                     .add("longitude",String.valueOf(longitude))
                     .add("address",String.valueOf(address))
@@ -356,6 +368,11 @@ public class Shopper extends AppCompatActivity {
         Intent intent = new Intent(Shopper.this, Orders.class);
         intent.putExtra("BASKET_NAME", basketName);
         intent.putExtra("BASKET_ITEMS", Items);
+
+        intent.putExtra("USER_EMAIL", emailForDB);
+        intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", ""));
+        intent.putExtra("USER_ID", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", ""));
+        intent.putExtra("ORDER_MODE", "shopper");
         startActivity(intent);
     }
 

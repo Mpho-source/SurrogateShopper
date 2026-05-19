@@ -1,88 +1,148 @@
 package com.example.surrogateshopper;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.RadioButton;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public DatabaseHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+
+    private static final String DATABASE_NAME = "ShopperDB";
+    private static final int DATABASE_VERSION = 2;
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    public void onCreate(SQLiteDatabase db) {
 
+
+        db.execSQL(
+                "CREATE TABLE basket (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "name TEXT," +
+                        "qty INTEGER," +
+                        "size TEXT)"
+        );
+
+
+        db.execSQL(
+                "CREATE TABLE orders (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "basket_name TEXT," +
+                        "items TEXT," +
+                        "timestamp TEXT," +
+                        "status TEXT," +
+                        "email TEXT)"
+        );
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        db.execSQL("DROP TABLE IF EXISTS basket");
+        db.execSQL("DROP TABLE IF EXISTS orders");
+
+        onCreate(db);
     }
 
-    public static class PickActivity extends AppCompatActivity {
 
 
-        RadioButton radShop, radVolunteer;
 
 
-        String name, email;
+    public void insertItem(String name, int qty, String size) {
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.pick_activity);
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("qty", qty);
+        values.put("size", size);
 
-            radShop = findViewById(R.id.radShop);
-            radVolunteer = findViewById(R.id.radVolunteer);
+        db.insert("basket", null, values);
+    }
 
+    public HashMap<String, Integer> getAllItems() {
 
-            Intent receivedIntent = getIntent();
+        HashMap<String, Integer> items = new HashMap<>();
 
-            name = receivedIntent.getStringExtra("USER_NAME");
-            email = receivedIntent.getStringExtra("USER_EMAIL");
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM basket", null);
+
+        if (cursor.moveToFirst()) {
+
+            do {
+
+                String key =
+                        cursor.getString(1)
+                                + " (" +
+                                cursor.getString(3)
+                                + ")";
+
+                items.put(key, cursor.getInt(2));
+
+            } while (cursor.moveToNext());
         }
 
+        cursor.close();
 
-        public void doSignIn(View view) {
+        return items;
+    }
 
-            Intent intent;
+    public void clearBasket() {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete("basket", null, null);
+    }
 
 
-            if (radShop.isChecked()) {
 
-                intent = new Intent(PickActivity.this, Shopper.class);
 
+
+    public void saveOrder(String basketName,
+                          HashMap<String, Integer> items,
+                          String timestamp,
+                          String status,
+                          String email) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+
+            for (Map.Entry<String, Integer> entry : items.entrySet()) {
+
+                JSONObject obj = new JSONObject();
+
+                obj.put("item", entry.getKey());
+                obj.put("qty", entry.getValue());
+
+                jsonArray.put(obj);
             }
-            else if (radVolunteer.isChecked()) {
 
-                intent = new Intent(PickActivity.this, Volunteer.class);
-
-            }
-            else {
-
-                Toast.makeText(
-                        this,
-                        "Please choose an activity",
-                        Toast.LENGTH_SHORT
-                ).show();
-
-                return;
-            }
-
-
-            intent.putExtra("USER_NAME", name);
-            intent.putExtra("USER_EMAIL", email);
-
-            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        ContentValues values = new ContentValues();
+
+        values.put("basket_name", basketName);
+        values.put("items", jsonArray.toString());
+        values.put("timestamp", timestamp);
+        values.put("status", status);
+        values.put("email", email);
+
+        db.insert("orders", null, values);
     }
 }

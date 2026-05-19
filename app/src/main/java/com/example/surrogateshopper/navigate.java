@@ -83,16 +83,16 @@ public class navigate extends AppCompatActivity {
         nodeMarker.setTitle("Delivery Destination Target");
         mapView.getOverlays().add(nodeMarker);
 
-        // Initial text display setup
+
         btnStatusAction.setText("ARRIVED");
 
-        // Click logic registered exactly ONCE here to prevent recursive event stack accumulation
+
         btnStatusAction.setOnClickListener(v -> {
             if (currentStatus.equals("Out for Delivery")) {
                 updateDatabaseStatus("Arrived");
             } else if (currentStatus.equals("Arrived")) {
                 updateDatabaseStatus("Completed");
-                //i want to addd intent herer so it redirecte me to the dashborad
+
 
             }
         });
@@ -199,22 +199,22 @@ public class navigate extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     String resultText = response.body().string().trim();
                     try {
-                        // Safe parsing using explicit JSON parsing engine maps
+
                         JSONObject jsonObject = new JSONObject(resultText);
                         String statusResponse = jsonObject.getString("status");
 
                         if (statusResponse.equals("success")) {
                             runOnUiThread(() -> {
-                                currentStatus = targetStatus; // Safely update tracking state
+                                currentStatus = targetStatus;
 
                                 if (currentStatus.equals("Arrived")) {
                                     Toast.makeText(navigate.this, "Status updated: Arrived!", Toast.LENGTH_SHORT).show();
-                                    btnStatusAction.setText("COMPLETE ORDER"); // Change visual presentation text instantly
+                                    btnStatusAction.setText("COMPLETE ORDER");
                                 } else if (currentStatus.equals("Completed")) {
                                     Toast.makeText(navigate.this, "Order Delivery Complete!", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(navigate.this, Volunteer.class);
                                     startActivity(intent);
-                                    finish(); // Tear down navigation view safely
+                                    finish();
                                 }
                             });
                         } else {
