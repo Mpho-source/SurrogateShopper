@@ -2,6 +2,7 @@ package com.example.surrogateshopper;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -91,6 +92,8 @@ public class navigate extends AppCompatActivity {
                 updateDatabaseStatus("Arrived");
             } else if (currentStatus.equals("Arrived")) {
                 updateDatabaseStatus("Completed");
+                //i want to addd intent herer so it redirecte me to the dashborad
+
             }
         });
 
@@ -209,6 +212,8 @@ public class navigate extends AppCompatActivity {
                                     btnStatusAction.setText("COMPLETE ORDER"); // Change visual presentation text instantly
                                 } else if (currentStatus.equals("Completed")) {
                                     Toast.makeText(navigate.this, "Order Delivery Complete!", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(navigate.this, Volunteer.class);
+                                    startActivity(intent);
                                     finish(); // Tear down navigation view safely
                                 }
                             });
