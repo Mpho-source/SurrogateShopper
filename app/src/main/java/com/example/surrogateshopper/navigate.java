@@ -43,6 +43,8 @@ public class navigate extends AppCompatActivity {
 
     private String requestId;
     private String currentStatus = "Out for Delivery";
+    private String volunteerId = "";
+    private String volunteerEmail = "";
     private double destLat, destLng;
     private String destAddress;
 
@@ -63,6 +65,8 @@ public class navigate extends AppCompatActivity {
         destLat = getIntent().getDoubleExtra("LATITUDE", -26.1929);
         destLng = getIntent().getDoubleExtra("LONGITUDE", 28.0305);
         destAddress = getIntent().getStringExtra("ADDRESS");
+        volunteerId = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", "");
+        volunteerEmail = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userEmail", "");
 
         mapView = findViewById(R.id.mapView);
         btnStatusAction = findViewById(R.id.btnStatusAction);
@@ -181,6 +185,8 @@ public class navigate extends AppCompatActivity {
         RequestBody formBody = new FormBody.Builder()
                 .add("request_id", requestId)
                 .add("status", targetStatus)
+                .add("volunteer_id", volunteerId)
+                .add("volunteer_email", volunteerEmail)
                 .build();
 
         Request request = new Request.Builder()
@@ -213,6 +219,9 @@ public class navigate extends AppCompatActivity {
                                 } else if (currentStatus.equals("Completed")) {
                                     Toast.makeText(navigate.this, "Order Delivery Complete!", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(navigate.this, Volunteer.class);
+                                    intent.putExtra("USER_ID", volunteerId);
+                                    intent.putExtra("USER_EMAIL", volunteerEmail);
+                                    intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "Volunteer"));
                                     startActivity(intent);
                                     finish();
                                 }

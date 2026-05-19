@@ -51,7 +51,7 @@
                 android:visibility="gone"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/purple_500"
+                app:cardBackgroundColor="#1976D2"
                 app:layout_constraintTop_toBottomOf="@id/headerTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -85,7 +85,7 @@
                                 android:id="@+id/tvOrderBasket"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Basket Name"
+                                android:text="Orders"
                                 android:textColor="@android:color/white"
                                 android:textSize="20sp"
                                 android:textStyle="bold" />

@@ -1,7 +1,6 @@
 package com.example.surrogateshopper;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -9,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -40,8 +40,7 @@ public class Orders extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private LinearLayout ordersContainer;
-    private TextView textEmpty;
-    private TextView headerTitle;
+    private TextView textEmpty, headerTitle;
     private MaterialCardView basketCard;
 
     private String email = "";
@@ -63,17 +62,9 @@ public class Orders extends AppCompatActivity {
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        toggle.getDrawerArrowDrawable().setColor(Color.WHITE);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
 
-        email = getValue("USER_EMAIL", "userEmail");
-        name = getValue("USER_NAME", "userName");
-        userId = getValue("USER_ID", "userId");
-
-        mode = getIntent().getStringExtra("ORDER_MODE");
-        if (mode == null || mode.trim().isEmpty()) {
-            mode = "shopper";
-        }
-
+        loadSession();
         setNavigationHeader(navigationView);
         setNavigationActions(navigationView);
 
@@ -82,25 +73,27 @@ public class Orders extends AppCompatActivity {
         basketCard = findViewById(R.id.basketCard);
         ordersContainer = findViewById(R.id.ordersContainer);
 
-        TextView tvOrderBasket = findViewById(R.id.tvOrderBasket);
-        TextView tvOrderStatus = findViewById(R.id.tvOrderStatus);
-        if (mode.equalsIgnoreCase("volunteer")) {
-            tvOrderBasket.setText("Active and Past Orders");
-        } else {
-            tvOrderBasket.setText("Order History");
-        }
-        tvOrderStatus.setText("");
-
         showLoading();
         fetchOrdersFromServer();
     }
 
-    private String getValue(String intentKey, String prefKey) {
-        String value = getIntent().getStringExtra(intentKey);
-        if (value == null || value.trim().isEmpty()) {
-            value = getSharedPreferences("UserSession", MODE_PRIVATE).getString(prefKey, "");
-        }
-        return value == null ? "" : value.trim();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ordersContainer != null) fetchOrdersFromServer();
+    }
+
+    private void loadSession() {
+        email = value(getIntent().getStringExtra("USER_EMAIL"));
+        name = value(getIntent().getStringExtra("USER_NAME"));
+        userId = value(getIntent().getStringExtra("USER_ID"));
+        mode = value(getIntent().getStringExtra("ORDER_MODE"));
+
+        if (email.isEmpty()) email = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userEmail", "");
+        if (name.isEmpty()) name = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "User");
+        if (userId.isEmpty()) userId = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", "");
+        if (mode.isEmpty()) mode = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userRole", "shopper");
+        if (!mode.equalsIgnoreCase("volunteer")) mode = "shopper";
     }
 
     private void setNavigationHeader(NavigationView navigationView) {
@@ -114,20 +107,19 @@ public class Orders extends AppCompatActivity {
     private void setNavigationActions(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
-            if (id == R.id.nav_home) {
+            if (id == R.id.nav_home || id == R.id.nav_dashboard) {
                 finish();
-            } else if (id == R.id.nav_order) {
+            } else if (id == R.id.nav_order || id == R.id.nav_my_orders) {
                 fetchOrdersFromServer();
+            } else if (id == R.id.nav_messages) {
+                Toast.makeText(this, "Open an order, then tap Message.", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.nav_profile) {
-                textEmpty.setVisibility(View.VISIBLE);
-                textEmpty.setText((name.isEmpty() ? "User" : name) + "\n" + email);
+                Toast.makeText(this, name + "\n" + email, Toast.LENGTH_LONG).show();
             } else if (id == R.id.nav_logout) {
                 getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
                 startActivity(new Intent(Orders.this, MainActivity.class));
                 finishAffinity();
             }
-
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
@@ -136,8 +128,8 @@ public class Orders extends AppCompatActivity {
     private void showLoading() {
         textEmpty.setVisibility(View.VISIBLE);
         textEmpty.setText("Loading orders...");
-        headerTitle.setVisibility(View.GONE);
         basketCard.setVisibility(View.GONE);
+        headerTitle.setVisibility(View.GONE);
     }
 
     private void fetchOrdersFromServer() {
@@ -152,102 +144,75 @@ public class Orders extends AppCompatActivity {
         HTTP.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> showEmpty("Could not load orders. Check your connection."));
+                runOnUiThread(() -> showError("Could not load orders. Tap Refresh."));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonStr = response.body() == null ? "" : response.body().string();
-
                 if (!response.isSuccessful()) {
-                    runOnUiThread(() -> showEmpty("Server error loading orders."));
+                    runOnUiThread(() -> showError("Server error loading orders."));
                     return;
                 }
-
                 runOnUiThread(() -> {
                     try {
                         renderOrders(new JSONArray(jsonStr));
                     } catch (Exception e) {
-                        showEmpty("Could not read orders data.");
+                        showError("Could not read orders from server.");
                     }
                 });
             }
         });
     }
 
+    private void showError(String message) {
+        textEmpty.setVisibility(View.GONE);
+        headerTitle.setVisibility(View.VISIBLE);
+        headerTitle.setText(mode.equalsIgnoreCase("volunteer") ? "Past Orders" : "Your Orders");
+        basketCard.setVisibility(View.VISIBLE);
+        ordersContainer.removeAllViews();
+        addRefreshButton();
+        addPlainText(message);
+    }
+
     private void renderOrders(JSONArray array) {
         ordersContainer.removeAllViews();
+        textEmpty.setVisibility(View.GONE);
+        headerTitle.setVisibility(View.VISIBLE);
+        headerTitle.setText(mode.equalsIgnoreCase("volunteer") ? "Past Orders" : "Your Orders");
+        basketCard.setVisibility(View.VISIBLE);
+        addRefreshButton();
 
         if (array.length() == 0) {
-            showEmpty(mode.equalsIgnoreCase("volunteer") ? "No active or past orders yet." : "You have no orders yet.");
+            addPlainText(mode.equalsIgnoreCase("volunteer") ? "You have no accepted or completed orders yet." : "You have no order history yet.");
             return;
         }
 
-        textEmpty.setVisibility(View.GONE);
-        headerTitle.setVisibility(View.VISIBLE);
-        headerTitle.setText(mode.equalsIgnoreCase("volunteer") ? "My Orders" : "Order History");
-        basketCard.setVisibility(View.VISIBLE);
-
-        addRefreshButton();
-
-        boolean hasActive = false;
-        boolean hasPast = false;
-
-        if (mode.equalsIgnoreCase("volunteer")) {
-            for (int i = 0; i < array.length(); i++) {
-                try {
-                    JSONObject order = array.getJSONObject(i);
-                    if (!isCompleted(order.optString("status", ""))) {
-                        if (!hasActive) {
-                            addSectionTitle("Active Orders");
-                            hasActive = true;
-                        }
-                        addOrder(order);
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-
-            for (int i = 0; i < array.length(); i++) {
-                try {
-                    JSONObject order = array.getJSONObject(i);
-                    if (isCompleted(order.optString("status", ""))) {
-                        if (!hasPast) {
-                            addSectionTitle("Past Orders");
-                            hasPast = true;
-                        }
-                        addOrder(order);
-                    }
-                } catch (Exception ignored) {
-                }
-            }
-        } else {
-            for (int i = 0; i < array.length(); i++) {
-                try {
-                    addOrder(array.getJSONObject(i));
-                } catch (Exception ignored) {
-                }
-            }
+        for (int i = 0; i < array.length(); i++) {
+            try {
+                JSONObject order = array.getJSONObject(i);
+                addOrderBlock(order, i > 0);
+            } catch (Exception ignored) {}
         }
     }
 
-    private void addOrder(JSONObject order) {
-        String requestId = clean(order.optString("request_id", ""));
-        String status = clean(order.optString("status", "Unknown"));
-        String createdAt = clean(order.optString("created_at", ""));
+    private void addOrderBlock(JSONObject order, boolean divider) throws Exception {
+        if (divider) addDivider();
+
+        String requestId = value(order.optString("request_id", ""));
+        String status = value(order.optString("status", "Unknown"));
+        String createdAt = value(order.optString("created_at", ""));
         JSONArray items = order.optJSONArray("items");
         if (items == null) items = new JSONArray();
-
-        addDivider();
 
         LinearLayout titleRow = new LinearLayout(this);
         titleRow.setOrientation(LinearLayout.HORIZONTAL);
         titleRow.setPadding(0, 8, 0, 4);
 
         TextView tvName = new TextView(this);
-        tvName.setText("📦  Order #" + requestId);
-        tvName.setTextColor(Color.WHITE);
-        tvName.setTextSize(15f);
+        tvName.setText("Order #" + requestId);
+        tvName.setTextColor(0xFFFFFFFF);
+        tvName.setTextSize(17f);
         tvName.setTypeface(null, Typeface.BOLD);
         tvName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 
@@ -264,122 +229,98 @@ public class Orders extends AppCompatActivity {
         if (!createdAt.isEmpty()) {
             TextView tvTime = new TextView(this);
             tvTime.setText(createdAt.length() > 16 ? createdAt.substring(0, 16) : createdAt);
-            tvTime.setTextColor(0xBBFFFFFF);
+            tvTime.setTextColor(0xDDFFFFFF);
             tvTime.setTextSize(12f);
             tvTime.setPadding(0, 0, 0, 6);
             ordersContainer.addView(tvTime);
         }
 
         if (items.length() == 0) {
-            TextView tvNoItems = new TextView(this);
-            tvNoItems.setText("  No items found for this order.");
-            tvNoItems.setTextColor(0xCCFFFFFF);
-            tvNoItems.setTextSize(13f);
-            ordersContainer.addView(tvNoItems);
+            addPlainText("No items found for this order.");
         } else {
             for (int j = 0; j < items.length(); j++) {
-                try {
-                    JSONObject item = items.getJSONObject(j);
-                    TextView tvItem = new TextView(this);
-                    String itemName = clean(item.optString("name", "Item"));
-                    String size = clean(item.optString("size", ""));
-                    String quantity = clean(item.optString("quantity", "1"));
-
-                    String text = "  " + (j + 1) + ".  " + itemName;
-                    if (!size.isEmpty()) text += " (" + size + ")";
-                    text += "  ×" + quantity;
-
-                    tvItem.setText(text);
-                    tvItem.setTextColor(0xCCFFFFFF);
-                    tvItem.setTextSize(13f);
-                    tvItem.setPadding(8, 2, 0, 2);
-                    ordersContainer.addView(tvItem);
-                } catch (Exception ignored) {
-                }
+                JSONObject item = items.getJSONObject(j);
+                TextView tvItem = new TextView(this);
+                String itemName = value(item.optString("name", "Item"));
+                String size = value(item.optString("size", ""));
+                String quantity = value(item.optString("quantity", "1"));
+                tvItem.setText((j + 1) + ". " + (itemName.isEmpty() ? "Item" : itemName) + (size.isEmpty() ? "" : " (" + size + ")") + " x" + (quantity.isEmpty() ? "1" : quantity));
+                tvItem.setTextColor(0xEEFFFFFF);
+                tvItem.setTextSize(14f);
+                tvItem.setPadding(8, 2, 0, 2);
+                ordersContainer.addView(tvItem);
             }
         }
 
-        addViewButton(requestId, status, items.toString());
+        addActions(requestId, status);
+    }
+
+    private void addActions(String requestId, String status) {
+        Button view = makeBlueButton("View details");
+        view.setOnClickListener(v -> {
+            Intent intent = new Intent(Orders.this, OrderDetailsActivity.class);
+            intent.putExtra("ORDER_ID", requestId);
+            intent.putExtra("STATUS", status);
+            intent.putExtra("ROLE", mode);
+            intent.putExtra("USER_ID", userId);
+            intent.putExtra("USER_EMAIL", email);
+            startActivity(intent);
+        });
+        ordersContainer.addView(view);
+
+        Button message = makeBlueButton(mode.equalsIgnoreCase("volunteer") ? "Message Shopper" : "Message Volunteer");
+        message.setOnClickListener(v -> {
+            Intent intent = new Intent(Orders.this, ShopperMessage.class);
+            intent.putExtra("REQUEST_ID", requestId);
+            intent.putExtra("ORDER_LABEL", "Order #" + requestId);
+            startActivity(intent);
+        });
+        ordersContainer.addView(message);
     }
 
     private void addRefreshButton() {
-        Button refresh = new Button(this);
-        refresh.setText("Refresh");
-        refresh.setAllCaps(false);
-        refresh.setTextColor(Color.WHITE);
-        refresh.setBackgroundColor(Color.rgb(33, 150, 243));
+        Button refresh = makeBlueButton("Refresh");
         refresh.setOnClickListener(v -> fetchOrdersFromServer());
         ordersContainer.addView(refresh);
     }
 
-    private void addSectionTitle(String title) {
-        TextView section = new TextView(this);
-        section.setText(title);
-        section.setTextColor(Color.WHITE);
-        section.setTextSize(20f);
-        section.setTypeface(null, Typeface.BOLD);
-        section.setPadding(0, 18, 0, 8);
-        ordersContainer.addView(section);
+    private Button makeBlueButton(String text) {
+        Button button = new Button(this);
+        button.setText(text);
+        button.setAllCaps(false);
+        button.setTextColor(0xFFFFFFFF);
+        button.setBackgroundColor(0xFF1976D2);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 10, 0, 0);
+        button.setLayoutParams(params);
+        return button;
     }
 
-    private void addViewButton(String requestId, String status, String itemsJson) {
-        Button btnView = new Button(this);
-        btnView.setText("View Details");
-        btnView.setAllCaps(false);
-        btnView.setTextColor(Color.WHITE);
-        btnView.setBackgroundColor(Color.rgb(33, 150, 243));
-        btnView.setOnClickListener(v -> {
-            Intent intent = new Intent(Orders.this, OrderDetailsActivity.class);
-            intent.putExtra("ORDER_ID", requestId);
-            intent.putExtra("STATUS", status);
-            intent.putExtra("ITEMS_JSON", itemsJson);
-            intent.putExtra("USER_ID", userId);
-            intent.putExtra("USER_EMAIL", email);
-            intent.putExtra("USER_NAME", name);
-            startActivity(intent);
-        });
-        ordersContainer.addView(btnView);
-
-        Button btnMessage = new Button(this);
-        btnMessage.setText(mode.equalsIgnoreCase("volunteer") ? "Message Shopper" : "Message Volunteer");
-        btnMessage.setAllCaps(false);
-        btnMessage.setOnClickListener(v -> {
-            Intent intent = new Intent(Orders.this, ShopperMessage.class);
-            intent.putExtra("REQUEST_ID", requestId);
-            intent.putExtra("ORDER_LABEL", "Order #" + requestId);
-            intent.putExtra("USER_EMAIL", email);
-            startActivity(intent);
-        });
-        ordersContainer.addView(btnMessage);
+    private void addPlainText(String text) {
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextColor(0xEEFFFFFF);
+        tv.setTextSize(15f);
+        tv.setPadding(8, 12, 8, 8);
+        ordersContainer.addView(tv);
     }
 
     private void addDivider() {
         View divider = new View(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        params.setMargins(0, 12, 0, 12);
+        params.setMargins(0, 16, 0, 16);
         divider.setLayoutParams(params);
-        divider.setBackgroundColor(0x44FFFFFF);
+        divider.setBackgroundColor(0x66FFFFFF);
         ordersContainer.addView(divider);
     }
 
-    private void showEmpty(String message) {
-        textEmpty.setVisibility(View.VISIBLE);
-        textEmpty.setText(message);
-        headerTitle.setVisibility(View.GONE);
-        basketCard.setVisibility(View.GONE);
-    }
-
-    private boolean isCompleted(String status) {
-        return clean(status).equalsIgnoreCase("Completed");
-    }
-
     private int statusColor(String status) {
-        if (status.equalsIgnoreCase("Completed")) return Color.rgb(76, 175, 80);
-        if (status.equalsIgnoreCase("Pending")) return Color.rgb(255, 193, 7);
-        return Color.rgb(33, 150, 243);
+        if (status.equalsIgnoreCase("Completed")) return 0xFFFFFFFF;
+        if (status.equalsIgnoreCase("Pending")) return 0xFFFFFFFF;
+        return 0xFFE3F2FD;
     }
 
-    private String clean(String value) {
+    private String value(String value) {
         if (value == null) return "";
         String v = value.trim();
         return v.equalsIgnoreCase("null") ? "" : v;

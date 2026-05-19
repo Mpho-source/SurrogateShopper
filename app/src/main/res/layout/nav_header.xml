@@ -2,22 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="176dp"
-    android:background="#DDFFFFFF"
+    android:background="#1976D2"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:layout_width="88dp"
-        android:layout_height="88dp"
-        android:src="@drawable/account_icon" />
+        android:layout_width="213dp"
+        android:layout_height="105dp"
+        android:src="@drawable/account_icon"></ImageView>
 
     <TextView
         android:id="@+id/nav_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="User"
-        android:textColor="@android:color/black"
+        android:textColor="#FFFFFF"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textStyle="bold" />
 
@@ -25,6 +26,6 @@
         android:id="@+id/nav_user_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:text="No email found" />
+        android:textColor="#FFFFFF"
+        android:text="" />
 </LinearLayout>

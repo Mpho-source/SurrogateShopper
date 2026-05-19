@@ -191,7 +191,7 @@ public class ShopperMessage extends AppCompatActivity {
 
         TextView tvSender = new TextView(this);
         tvSender.setText(sender);
-        tvSender.setTextColor(0xFFBB86FC);
+        tvSender.setTextColor(0xFF1976D2);
         tvSender.setTextSize(12f);
         row.addView(tvSender);
 

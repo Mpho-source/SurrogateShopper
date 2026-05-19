@@ -104,8 +104,9 @@ public class Shopper extends AppCompatActivity {
         TextView hi = findViewById(R.id.welcomeShopper);
         String name = getIntent().getStringExtra("USER_NAME");
         if (name == null || name.trim().isEmpty()) {
-            name = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "User");
+            name = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "Shopper");
         }
+        getSharedPreferences("UserSession", MODE_PRIVATE).edit().putString("userRole", "shopper").apply();
         hi.setText("Hi 👋 " + name);
 
         getDetails(emailForDB);
@@ -131,16 +132,16 @@ public class Shopper extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_logout) {
+                getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
                 Intent intent = new Intent(Shopper.this, MainActivity.class);
                 startActivity(intent);
-                finish();
+                finishAffinity();
             } else if(id == R.id.nav_order){
                 Intent intent = new Intent(Shopper.this, Orders.class);
-
-                intent.putExtra("USER_EMAIL", emailForDB);
-                intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", ""));
-                intent.putExtra("USER_ID", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", ""));
                 intent.putExtra("ORDER_MODE", "shopper");
+                intent.putExtra("USER_EMAIL", emailForDB);
+                intent.putExtra("USER_ID", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", ""));
+                intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "Shopper"));
                 startActivity(intent);
             }
             drawerLayout.closeDrawers();
@@ -335,8 +336,8 @@ public class Shopper extends AppCompatActivity {
             OkHttpClient client = new OkHttpClient();
             RequestBody formBody = new FormBody.Builder()
                     .add("email", email)
+                    .add("basket_name", basketName == null || basketName.trim().isEmpty() ? "Order" : basketName)
                     .add("items_json", jsonArray.toString())
-                    .add("basket_name", basketName == null || basketName.trim().isEmpty() ? "My Basket" : basketName.trim())
                     .add("latitude", String.valueOf(latitude))
                     .add("longitude",String.valueOf(longitude))
                     .add("address",String.valueOf(address))
@@ -369,10 +370,10 @@ public class Shopper extends AppCompatActivity {
         intent.putExtra("BASKET_NAME", basketName);
         intent.putExtra("BASKET_ITEMS", Items);
 
-        intent.putExtra("USER_EMAIL", emailForDB);
-        intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", ""));
-        intent.putExtra("USER_ID", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", ""));
         intent.putExtra("ORDER_MODE", "shopper");
+        intent.putExtra("USER_EMAIL", emailForDB);
+        intent.putExtra("USER_ID", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", ""));
+        intent.putExtra("USER_NAME", getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "Shopper"));
         startActivity(intent);
     }
 

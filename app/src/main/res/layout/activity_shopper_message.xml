@@ -73,7 +73,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
-            android:background="@drawable/btn_purple"
+            android:background="@drawable/btn_green"
             android:src="@android:drawable/ic_menu_send"
             android:contentDescription="Send message" />
 

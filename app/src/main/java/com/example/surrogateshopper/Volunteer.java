@@ -20,6 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -35,77 +37,69 @@ public class Volunteer extends AppCompatActivity {
     private static final String URL_REQUESTS = "https://wmc.ms.wits.ac.za/students/sgroup2715/getRequests.php";
     private static final String URL_ACCEPT = "https://wmc.ms.wits.ac.za/students/sgroup2715/acceptRequest.php";
 
+    private final List<Order> orders = new ArrayList<>();
     private LinearLayout ordersListContainer;
-    private TextView tvVolTitle;
     private DrawerLayout drawerLayout;
-
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle toggle;
     private String currentVolId = "";
     private String currentEmail = "";
-    private String currentName = "";
+    private String currentName = "Volunteer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volunteer);
 
-        currentVolId = getValue("USER_ID", "userId");
-        currentEmail = getValue("USER_EMAIL", "userEmail");
-        currentName = getValue("USER_NAME", "userName");
+        loadSession();
 
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_side);
+        navigationView = findViewById(R.id.nav_side);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this,
-                drawerLayout,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close
-        );
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        toggle.getDrawerArrowDrawable().setColor(Color.WHITE);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
 
-        setNavigationHeader(navigationView);
-        setNavigationActions(navigationView);
+        setupHeader();
+        setupNavigation();
 
         ordersListContainer = findViewById(R.id.ordersListContainer);
-        tvVolTitle = findViewById(R.id.tvVolTitle);
-
         fetchRequestsFromServer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (ordersListContainer != null) {
-            fetchRequestsFromServer();
-        }
+        if (ordersListContainer != null) fetchRequestsFromServer();
     }
 
-    private String getValue(String intentKey, String prefKey) {
-        String value = getIntent().getStringExtra(intentKey);
-        if (value == null || value.trim().isEmpty()) {
-            value = getSharedPreferences("UserSession", MODE_PRIVATE).getString(prefKey, "");
-        }
-        return value == null ? "" : value.trim();
+    private void loadSession() {
+        currentVolId = value(getIntent().getStringExtra("USER_ID"));
+        currentEmail = value(getIntent().getStringExtra("USER_EMAIL"));
+        currentName = value(getIntent().getStringExtra("USER_NAME"));
+
+        if (currentVolId.isEmpty()) currentVolId = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userId", "");
+        if (currentEmail.isEmpty()) currentEmail = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userEmail", "");
+        if (currentName.isEmpty()) currentName = getSharedPreferences("UserSession", MODE_PRIVATE).getString("userName", "Volunteer");
+
+        getSharedPreferences("UserSession", MODE_PRIVATE).edit().putString("userRole", "volunteer").apply();
     }
 
-    private void setNavigationHeader(NavigationView navigationView) {
+    private void setupHeader() {
         View header = navigationView.getHeaderView(0);
-        TextView nameView = header.findViewById(R.id.nav_user_name);
-        TextView emailView = header.findViewById(R.id.nav_user_email);
-        nameView.setText(currentName.isEmpty() ? "Volunteer" : currentName);
-        emailView.setText(currentEmail.isEmpty() ? "No email found" : currentEmail);
+        TextView name = header.findViewById(R.id.nav_user_name);
+        TextView email = header.findViewById(R.id.nav_user_email);
+        name.setText(currentName.isEmpty() ? "Volunteer" : currentName);
+        email.setText(currentEmail.isEmpty() ? "No email found" : currentEmail);
     }
 
-    private void setNavigationActions(NavigationView navigationView) {
+    private void setupNavigation() {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_dashboard) {
                 fetchRequestsFromServer();
             } else if (id == R.id.nav_my_orders) {
@@ -116,122 +110,116 @@ public class Volunteer extends AppCompatActivity {
                 intent.putExtra("USER_NAME", currentName);
                 startActivity(intent);
             } else if (id == R.id.nav_messages) {
-                Toast.makeText(Volunteer.this, "Open an order, then tap Message Shopper.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Open an accepted order, then tap Message.", Toast.LENGTH_LONG).show();
             } else if (id == R.id.nav_profile) {
-                Toast.makeText(Volunteer.this, currentName + "\n" + currentEmail, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, currentName + "\n" + currentEmail, Toast.LENGTH_LONG).show();
             } else if (id == R.id.nav_logout) {
                 getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
                 startActivity(new Intent(Volunteer.this, MainActivity.class));
                 finishAffinity();
             }
-
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
     }
 
     private void fetchRequestsFromServer() {
-        tvVolTitle.setText("Available Requests");
-        showMessage("Loading available requests...");
-
+        showLoading("Loading available requests...");
         Request request = new Request.Builder().url(URL_REQUESTS).get().build();
 
         HTTP.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> showMessage("Could not load requests. Tap Refresh."));
+                runOnUiThread(() -> showLoading("Could not load requests. Tap Refresh."));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonData = response.body() == null ? "" : response.body().string();
-
                 if (!response.isSuccessful()) {
-                    runOnUiThread(() -> showMessage("Server error loading requests."));
+                    runOnUiThread(() -> showLoading("Server error loading requests."));
                     return;
                 }
 
-                runOnUiThread(() -> {
-                    try {
-                        renderRequests(new JSONArray(jsonData));
-                    } catch (Exception e) {
-                        showMessage("Bad response from getRequests.php.");
+                try {
+                    JSONArray array = new JSONArray(jsonData);
+                    List<Order> freshOrders = new ArrayList<>();
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject obj = array.getJSONObject(i);
+                        freshOrders.add(new Order(
+                                obj.optString("request_id"),
+                                "Order #" + obj.optString("request_id"),
+                                obj.optString("shopper_name", "Shopper"),
+                                obj.optString("status", "Pending"),
+                                new ArrayList<>()
+                        ));
                     }
-                });
+                    runOnUiThread(() -> {
+                        orders.clear();
+                        orders.addAll(freshOrders);
+                        renderOrders();
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(() -> showLoading("Bad server response. Check getRequests.php."));
+                }
             }
         });
     }
 
-    private void renderRequests(JSONArray array) {
+    private void showLoading(String message) {
         ordersListContainer.removeAllViews();
         ordersListContainer.addView(makeRefreshButton());
-
-        if (array.length() == 0) {
-            addText("No available requests right now.", 16, Color.WHITE, 18);
-            return;
-        }
-
-        for (int i = 0; i < array.length(); i++) {
-            try {
-                JSONObject obj = array.getJSONObject(i);
-
-                String requestId = clean(obj.optString("request_id"));
-                String shopperName = clean(obj.optString("shopper_name"));
-                String status = clean(obj.optString("status"));
-                JSONArray items = obj.optJSONArray("items");
-
-                View card = getLayoutInflater().inflate(R.layout.item_order_card, ordersListContainer, false);
-
-                TextView tvBasket = card.findViewById(R.id.tvBasketName);
-                TextView tvShopper = card.findViewById(R.id.tvShopperName);
-                TextView tvStatus = card.findViewById(R.id.tvStatus);
-                Button btnAccept = card.findViewById(R.id.btnAcceptOrder);
-
-                tvBasket.setText("Request #" + requestId);
-                tvShopper.setText(shopperName.isEmpty() ? "Shopper" : shopperName);
-                tvStatus.setText(status.isEmpty() ? "Pending" : status);
-
-                btnAccept.setText("ACCEPT");
-                btnAccept.setEnabled(true);
-                btnAccept.setBackgroundColor(Color.rgb(76, 175, 80));
-                btnAccept.setTextColor(Color.WHITE);
-
-                String itemsJson = items == null ? "[]" : items.toString();
-
-                btnAccept.setOnClickListener(v -> acceptOrder(requestId, shopperName, itemsJson, btnAccept, tvStatus));
-
-                ordersListContainer.addView(card);
-            } catch (Exception ignored) {
-            }
-        }
+        TextView tv = new TextView(this);
+        tv.setText(message);
+        tv.setTextColor(Color.WHITE);
+        tv.setTextSize(16f);
+        tv.setPadding(8, 20, 8, 8);
+        ordersListContainer.addView(tv);
     }
 
     private Button makeRefreshButton() {
-        Button refresh = new Button(this);
-        refresh.setText("Refresh");
-        refresh.setAllCaps(false);
-        refresh.setTextColor(Color.WHITE);
-        refresh.setBackgroundColor(Color.rgb(33, 150, 243));
+        Button refresh = makeBlueButton("Refresh");
         refresh.setOnClickListener(v -> fetchRequestsFromServer());
         return refresh;
     }
 
-    private void showMessage(String message) {
+    private void renderOrders() {
         ordersListContainer.removeAllViews();
         ordersListContainer.addView(makeRefreshButton());
-        addText(message, 16, Color.WHITE, 18);
+
+        if (orders.isEmpty()) {
+            TextView empty = new TextView(this);
+            empty.setText("No available requests right now.");
+            empty.setTextColor(Color.WHITE);
+            empty.setTextSize(16f);
+            empty.setPadding(8, 20, 8, 8);
+            ordersListContainer.addView(empty);
+            return;
+        }
+
+        for (Order order : new ArrayList<>(orders)) {
+            View card = getLayoutInflater().inflate(R.layout.item_order_card, ordersListContainer, false);
+            TextView tvBasket = card.findViewById(R.id.tvBasketName);
+            TextView tvShopper = card.findViewById(R.id.tvShopperName);
+            TextView tvStatus = card.findViewById(R.id.tvStatus);
+            Button btnAccept = card.findViewById(R.id.btnAcceptOrder);
+
+            tvBasket.setText("Order #" + order.id);
+            tvShopper.setText("Shopper: " + order.shopperName);
+            tvStatus.setText(order.status);
+            tvStatus.setTextColor(Color.rgb(25, 118, 210));
+
+            btnAccept.setText("Accept");
+            btnAccept.setEnabled(true);
+            btnAccept.setTextColor(Color.WHITE);
+            btnAccept.setBackgroundColor(Color.rgb(25, 118, 210));
+            btnAccept.setOnClickListener(v -> acceptOrder(order, btnAccept, tvStatus));
+
+            ordersListContainer.addView(card);
+        }
     }
 
-    private void addText(String text, int size, int color, int topPadding) {
-        TextView tv = new TextView(this);
-        tv.setText(text);
-        tv.setTextColor(color);
-        tv.setTextSize(size);
-        tv.setPadding(8, topPadding, 8, 8);
-        ordersListContainer.addView(tv);
-    }
-
-    private void acceptOrder(String requestId, String shopperName, String itemsJson, Button button, TextView statusView) {
+    private void acceptOrder(Order order, Button button, TextView statusView) {
         if (currentVolId.isEmpty()) {
             Toast.makeText(this, "Login problem: missing volunteer ID.", Toast.LENGTH_LONG).show();
             return;
@@ -241,7 +229,7 @@ public class Volunteer extends AppCompatActivity {
         button.setText("Accepting...");
 
         RequestBody body = new FormBody.Builder()
-                .add("request_id", requestId)
+                .add("request_id", order.id)
                 .add("volunteer_id", currentVolId)
                 .add("volunteer_email", currentEmail)
                 .build();
@@ -253,7 +241,7 @@ public class Volunteer extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     button.setEnabled(true);
-                    button.setText("ACCEPT");
+                    button.setText("Accept");
                     Toast.makeText(Volunteer.this, "Network error accepting order.", Toast.LENGTH_SHORT).show();
                 });
             }
@@ -261,19 +249,19 @@ public class Volunteer extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String result = response.body() == null ? "" : response.body().string().trim();
-
                 runOnUiThread(() -> {
-                    if (response.isSuccessful() && result.toLowerCase().contains("success")) {
+                    if (response.isSuccessful() && result.toUpperCase().contains("SUCCESS")) {
+                        order.status = "Accepted";
                         statusView.setText("Accepted");
-                        button.setText("VIEW");
+                        button.setText("View");
                         button.setEnabled(true);
-                        button.setBackgroundColor(Color.rgb(33, 150, 243));
-                        button.setOnClickListener(v -> openOrderDetails(requestId, shopperName, "Accepted", itemsJson));
+                        button.setOnClickListener(v -> openOrderDetails(order));
                         Toast.makeText(Volunteer.this, "Order accepted.", Toast.LENGTH_SHORT).show();
+                        fetchRequestsFromServer();
                     } else {
                         button.setEnabled(true);
-                        button.setText("ACCEPT");
-                        Toast.makeText(Volunteer.this, result.isEmpty() ? "Order was already taken." : result, Toast.LENGTH_LONG).show();
+                        button.setText("Accept");
+                        Toast.makeText(Volunteer.this, result.isEmpty() ? "Order already taken." : result, Toast.LENGTH_LONG).show();
                         fetchRequestsFromServer();
                     }
                 });
@@ -281,21 +269,32 @@ public class Volunteer extends AppCompatActivity {
         });
     }
 
-    private void openOrderDetails(String requestId, String shopperName, String status, String itemsJson) {
+    private void openOrderDetails(Order order) {
         Intent intent = new Intent(Volunteer.this, OrderDetailsActivity.class);
-        intent.putExtra("ORDER_ID", requestId);
-        intent.putExtra("SHOPPER_NAME", shopperName);
-        intent.putExtra("STATUS", status);
-        intent.putExtra("ITEMS_JSON", itemsJson);
+        intent.putExtra("ORDER_ID", order.id);
+        intent.putExtra("SHOPPER_NAME", order.shopperName);
+        intent.putExtra("STATUS", order.status);
+        intent.putExtra("ROLE", "volunteer");
         intent.putExtra("USER_ID", currentVolId);
         intent.putExtra("USER_EMAIL", currentEmail);
-        intent.putExtra("USER_NAME", currentName);
         startActivity(intent);
     }
 
-    private String clean(String value) {
-        if (value == null) return "";
-        String trimmed = value.trim();
-        return trimmed.equalsIgnoreCase("null") ? "" : trimmed;
+    private Button makeBlueButton(String text) {
+        Button button = new Button(this);
+        button.setText(text);
+        button.setAllCaps(false);
+        button.setTextColor(Color.WHITE);
+        button.setBackgroundColor(Color.rgb(25, 118, 210));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, 0, 0, 14);
+        button.setLayoutParams(params);
+        return button;
+    }
+
+    private String value(String s) {
+        if (s == null) return "";
+        String v = s.trim();
+        return v.equalsIgnoreCase("null") ? "" : v;
     }
 }
